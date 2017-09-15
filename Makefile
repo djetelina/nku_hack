@@ -1,5 +1,8 @@
 PYTHON_VERSION=$(shell python -V)
 
+default:
+	@echo "make run?"
+
 localdev:
 ifneq ($(findstring Python 3.6, ${PYTHON_VERSION}), Python 3.6)
 	@echo "Python 3.6+ required!"
