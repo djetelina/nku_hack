@@ -2,11 +2,20 @@ import React from 'react';
 import { Icon, Input, Button, List } from 'semantic-ui-react';
 
 import constants from '../Constants';
+import GraphUnemployed from './GraphUnemployed';
 
 const buttonStyle = {
     border: 'none',
     background: 'white',
 };
+
+function middleFetch (response) {
+    return response.json();
+}
+
+function error (e) {
+    console.log(e);
+}
 
 class FormPartOne extends React.Component {
 
@@ -35,18 +44,30 @@ class FormPartOne extends React.Component {
     handleSubmit(event) {
         event.preventDefault();
         fetch(`${constants.serverUri}/api/suggest-locality?query=${this.state.street.trim()}`)
-        .then((response) => {
-            return response.json();
-        })
+        .then(middleFetch)
         .then(data => {
             this.setState({ firstPart: data.data });
             console.log(data.data);
         })
+        .catch(error);
     }
 
     handleGetAddressData(place) {
-
-        //fetch(`${constants.serverUri}/api/suggest-locality?query=${this.state.street.trim()}`, )
+        const data = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(place),
+        };
+        console.log('place', place, 'on url', );
+        fetch(`${constants.serverUri}/trest`, data)
+                .then(middleFetch)
+                .then((data) => {
+                    console.log('Druhy dotaz pro data do grafu');
+                    console.log(data);
+                })
+                .catch(error);
     }
 
     renderStreets() {
@@ -78,7 +99,8 @@ class FormPartOne extends React.Component {
                     <Button onClick={this.sendForm} style={{marginLeft: '1em'}} primary>Hledat</Button>
                     <Button onClick={this.handleReset} secondary>Zrušit</Button>
                 </form>
-                 <List>{this.renderStreets()}</List>
+                <List>{this.renderStreets()}</List>
+                <GraphUnemployed />
             </div>
         )
     }
