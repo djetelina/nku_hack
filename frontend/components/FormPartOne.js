@@ -3,6 +3,7 @@ import { Icon, Input, Button, List } from 'semantic-ui-react';
 
 import constants from '../Constants';
 import GraphUnemployed from './GraphUnemployed';
+import GraphAgeGroup from './GraphAgeGroup';
 
 const buttonStyle = {
     border: 'none',
@@ -25,6 +26,7 @@ class FormPartOne extends React.Component {
             street: 'horymírova',
             firstPart: null,
             unemployed: null,
+            ageGroups: null,
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -56,12 +58,15 @@ class FormPartOne extends React.Component {
         const data = {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'text/plain',
             },
             body: JSON.stringify(place),
+            mode: 'cors',
+            credentials: 'include',
         };
-        console.log('place', place, 'on url', );
-        fetch(`${constants.serverUri}/trest`, data)
+        console.log(data);
+        fetch(`${constants.serverUri}/api/age-groups`, data)
                 .then(middleFetch)
                 .then((data) => {
                     console.log('Druhy dotaz pro data do grafu');
@@ -101,6 +106,7 @@ class FormPartOne extends React.Component {
                 </form>
                 <List>{this.renderStreets()}</List>
                 <GraphUnemployed />
+                <GraphAgeGroup data={this.state.ageGroups}/>
             </div>
         )
     }
