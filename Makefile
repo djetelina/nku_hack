@@ -20,3 +20,11 @@ run:
 
 import:
 	PYTHONPATH=src:. python data_sources/importer.py
+
+db-dump:
+	mkdir -p dump
+	sqlite3 db/db.sqlite .dump | gzip > dump/dump.sql.gz
+
+db-recreate:
+	rm db/db.sqlite
+	zcat dump/* | sqlite3 db/db.sqlite
