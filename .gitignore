@@ -1,4 +1,4 @@
-# Created by .ignore support plugin (hsz.mobi)
+## Created by .ignore support plugin (hsz.mobi)
 ### Linux template
 *~
 
@@ -140,3 +140,7 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 fabric.properties
+
+# FRONTEND
+node_modules
+.next
