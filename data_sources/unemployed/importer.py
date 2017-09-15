@@ -52,13 +52,13 @@ def parse(path):
             for row in reader:
                 i += 1
                 values.append((
-                    row[8],
-                    row[5],
-                    row[6],
-                    row[2],
-                    row[1],
-                    row[3],
-                    row[9]
+                    row[8],  # municipality_id
+                    row[5],  # year_
+                    row[6],  # month_
+                    row[2],  # type_
+                    row[1],  # value_
+                    row[3],  # type_name
+                    row[9]   # municipality_text
                 ))
                 if i > 10000:
                     cur.executemany(query_prefix, values)
