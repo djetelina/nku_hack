@@ -26,5 +26,7 @@ db-dump:
 	sqlite3 db/db.sqlite .dump | gzip > dump/dump.sql.gz
 
 db-recreate:
-	rm db/db.sqlite
+	rm -f db/db.sqlite
 	zcat dump/* | sqlite3 db/db.sqlite
+	echo "vacuum optimize;" | sqlite3 db/db.sqlite
+
