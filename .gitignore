@@ -150,3 +150,5 @@ __pycache__
 frontend/package-lock.json
 ruianvo.db
 .editorconfig
+db
+

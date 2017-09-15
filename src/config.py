@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 # coding=utf-8
+
+
 import os
+
 
 DEBUG = True
 SECRET_KEY = 'nkuhacksznway'
-DATABASE_URI = os.getenv('DATABASE_URI')
+DATA_PATH = "../db/"
 
-RUJAN_PATH = "../db/rujan.db"
-
+RUIAN_PATH = DATA_PATH + "ruian.sqlite"
+DB_PATH = DATA_PATH + "db.sqlite"
