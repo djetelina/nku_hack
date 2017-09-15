@@ -26,5 +26,6 @@ def before_request():
 
 @bp_common.after_app_request
 def after_request(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
     current_app.logger.debug('Response: %s', response)
     return response

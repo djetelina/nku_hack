@@ -4,6 +4,7 @@ import withRedux from 'next-redux-wrapper';
 
 import { initStore, startClock, addCount, serverRenderClock } from '../store';
 import Layout from '../components/MyLayout.js';
+import FormPartOne from '../components/FormPartOne';
 import { Icon, Input } from 'semantic-ui-react'
 
 //import logo from '../static/logo.png';
@@ -28,11 +29,7 @@ class Counter extends React.Component {
     render () {
         return (
             <Layout>
-                  <Input
-                    icon={<Icon name='search' inverted circular link />}
-                    placeholder='Název ulice'
-                  />
-                <p>Hello Next.js</p>
+                <FormPartOne />
             </Layout>
         )
     }
