@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import csv
-import sqlite3
-from pprint import pprint
+from util import db
 
 YEAR = '2011'
 SOURCE_FILE = 'data_sources/csu_obyvatelstvo/SLDB_OBYVATELSTVO.CSV'
@@ -13,57 +12,63 @@ def save_to_db(table_name, data, metrics):
     Ulozi data do mezidatabaze, ze ktere si pak vytvorim dump a ten ulozim do repozitare.
     """
     print('Ukládám do DB.')
-    connection = sqlite3.connect('{}.sqlite'.format(table_name))
+    with db.common_db() as connection:
+        cursor = connection.cursor()
 
-    # Kraj
-    connection.execute('''DROP TABLE IF EXISTS {}_kraj'''.format(table_name))
-    connection.execute('''
-      CREATE TABLE {}_kraj (region_id INT, metric_id INT, metric TEXT, year INT DEFAULT 2011, value REAL)
-    '''.format(table_name))
-
-    query_values = []
-    for region_id, values in data['kraj'].items():
-        for index, item in enumerate(values['data']):
-            metric = metrics[index]
-            query_values.append((region_id, metric[0], metric[2], item))
-    connection.executemany(
-        '''INSERT INTO {}_kraj (region_id, metric_id, metric, value) VALUES (?, ?, ?, ?)'''.format(table_name),
-        query_values
-    )
-
-    # Okres
-    connection.execute('''DROP TABLE IF EXISTS {}_okres'''.format(table_name))
-    connection.execute('''
-          CREATE TABLE {}_okres (region_id INT, district_id INT, metric_id TEXT, metric TEXT, year INT DEFAULT 2011, value REAL)
+        # Kraj
+        cursor.execute('''DROP TABLE IF EXISTS {}_kraj'''.format(table_name))
+        cursor.execute('''
+          CREATE TABLE {}_kraj (region_id INT, metric_id INT, metric TEXT, year INT DEFAULT 2011, value REAL)
         '''.format(table_name))
 
-    query_values = []
-    for district_id, values in data['okres'].items():
-        for index, item in enumerate(values['data']):
-            metric = metrics[index]
-            query_values.append((values['kraj'], district_id, metric[0], metric[2], item))
-    connection.executemany(
-        '''INSERT INTO {}_okres (region_id, district_id, metric_id, metric, value) VALUES (?, ?, ?, ?, ?)'''.format(table_name),
-        query_values
-    )
+        query_values = []
+        for region_id, values in data['kraj'].items():
+            for index, item in enumerate(values['data']):
+                metric = metrics[index]
+                query_values.append((region_id, metric[0], metric[2], item))
+        cursor.executemany(
+            '''INSERT INTO {}_kraj (region_id, metric_id, metric, value) VALUES (?, ?, ?, ?)'''.format(table_name),
+            query_values
+        )
 
-    # Obec
-    connection.execute('''DROP TABLE IF EXISTS {}_obec'''.format(table_name))
-    connection.execute('''
-          CREATE TABLE {}_obec (region_id INT, district_id INT, city_id INT, metric_id TEXT, metric TEXT, year INT DEFAULT 2011, value REAL)
-        '''.format(table_name))
+        # Okres
+        cursor.execute('''DROP TABLE IF EXISTS {}_okres'''.format(table_name))
+        cursor.execute('''
+              CREATE TABLE {}_okres (region_id INT, district_id INT, metric_id TEXT, metric TEXT, year INT DEFAULT 2011, value REAL)
+            '''.format(table_name))
 
-    query_values = []
-    for city_id, values in data['obec'].items():
-        for index, item in enumerate(values['data']):
-            metric = metrics[index]
-            query_values.append((values['kraj'], values['okres'], city_id, metric[0], metric[2], item))
-    connection.executemany(
-        '''INSERT INTO {}_obec (region_id, district_id, city_id, metric_id, metric, value) VALUES (?, ?, ?, ?, ?, ?)'''.format(table_name),
-        query_values
-    )
+        query_values = []
+        for district_id, values in data['okres'].items():
+            for index, item in enumerate(values['data']):
+                metric = metrics[index]
+                query_values.append((values['kraj'], district_id, metric[0], metric[2], item))
+        cursor.executemany(
+            '''INSERT INTO {}_okres (region_id, district_id, metric_id, metric, value) VALUES (?, ?, ?, ?, ?)'''.format(table_name),
+            query_values
+        )
 
-    connection.commit()
+        # Obec
+        cursor.execute('''DROP TABLE IF EXISTS {}_obec'''.format(table_name))
+        cursor.execute('''
+              CREATE TABLE {}_obec (region_id INT, district_id INT, city_id INT, metric_id TEXT, metric TEXT, year INT DEFAULT 2011, value REAL)
+            '''.format(table_name))
+
+        query_values = []
+        for city_id, values in data['obec'].items():
+            for index, item in enumerate(values['data']):
+                metric = metrics[index]
+                query_values.append((values['kraj'], values['okres'], city_id, metric[0], metric[2], item))
+        cursor.executemany(
+            '''INSERT INTO {}_obec (region_id, district_id, city_id, metric_id, metric, value) VALUES (?, ?, ?, ?, ?, ?)'''.format(table_name),
+            query_values
+        )
+
+        connection.commit()
+
+    # Vycistim data. Nelze delat v ramci transakce.
+    with db.common_db() as connection:
+        cursor = connection.cursor()
+        cursor.execute("VACUUM")
 
 
 def load_list_location():
@@ -250,8 +255,12 @@ def education(list_locations):
         save_to_db('education', data, metrics)
 
 
-if __name__ == '__main__':
+def main():
     locations_list = load_list_location()
     nationality(locations_list)
     marital_status(locations_list)
     education(locations_list)
+
+
+if __name__ == '__main__':
+    main()

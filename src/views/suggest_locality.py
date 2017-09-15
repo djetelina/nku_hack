@@ -1,10 +1,11 @@
 # -*- encoding: utf-8 -*-
-from views.decorators import speaks_json
+from views.decorators import speaks_json, allowed_post_only
 from flask import request
 from util import db
 
 
 @speaks_json
+@allowed_post_only
 def suggest_locality():
     # type: () -> Dict[str, Any]
     """

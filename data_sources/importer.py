@@ -1,6 +1,7 @@
 # -*- coding utf-8 -*-
 
-from unemployed import importer
+from csu_obyvatelstvo import importer as csu_obyvatelstvo_importer
+from unemployed import importer as unemployed_importer
 
 
 def main():
@@ -8,7 +9,8 @@ def main():
     SEM napis seznam modulu k importu
     :return:
     """
-    importer.run()
+    csu_obyvatelstvo_importer.main()
+    unemployed_importer.run()
 
 
 if __name__ == "__main__":
