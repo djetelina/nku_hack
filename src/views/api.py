@@ -9,4 +9,4 @@ bp_api = Blueprint('api', __name__, url_prefix='/api/')
 
 # Naseptavac lokalit
 bp_api.add_url_rule('suggest-locality', 'suggest_locality', view_func=suggest_locality)
-bp_api.add_url_rule('age-groups', 'age_groups', view_func=age_groups_all)
+bp_api.add_url_rule('age-groups', 'age_groups', view_func=age_groups_all, method=['POST', 'GET'])
