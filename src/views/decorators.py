@@ -18,6 +18,7 @@ def speaks_json(f):
         res = f(*args, **kwargs)
         result_dict['result'] = res['result'] if 'result' in res else True
         result_dict['data'] = res.get('data')
+        result_dict['title'] = res.get('title')
         result_dict['message'] = res.get('error', 'OK' if result_dict['result'] else 'UNKNOWN ERROR')
         return jsonify(result_dict)
 
