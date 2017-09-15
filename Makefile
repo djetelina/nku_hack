@@ -19,5 +19,4 @@ run:
 	cd frontend && npm i
 
 import:
-	python data_sources/importer.py
-
+	PYTHONPATH=src:. python data_sources/importer.py

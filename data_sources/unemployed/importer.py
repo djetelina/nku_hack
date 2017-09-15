@@ -2,40 +2,69 @@
 
 import os
 import csv
-from src.util import db
+from util import db
 
 DATA_DIR = os.path.dirname(os.path.realpath(__file__)) + "/data/"
 
 
 def run():
-    with db.ruian_db() as ruian:
-        ruian.cursor()
-        """
-        CREATE TABLE unemployed IF NOT EXISTS (
+    with db.common_db() as con:
+        cur = con.cursor()
+        vacuum = "DROP TABLE unemployed"
+        try:
+            cur.execute(vacuum)
+        except:
+            pass
+
+        create_table = """
+        CREATE TABLE unemployed (
             municipality_id INT,
-            year INT,
-            month INT,
-            type VARCHAR
-        )
+            year_ INT,
+            month_ INT,
+            type_ VARCHAR,
+            value_ FLOAT,
+            type_name VARCHAR,
+            municipality_text VARCHAR
+        );
         """
+        cur.execute(create_table)
+        con.commit()
 
     for fname in os.listdir(DATA_DIR):
         if fname not in (".", ".."):
-            print(fname)
             parse(DATA_DIR + fname)
+
+    with db.common_db() as con:
+        cur = con.cursor()
+        cur.execute("VACUUM")
 
 
 def parse(path):
-    with db.ruian_db() as ruian:
-        cur = ruian.cursor()
-        query_prefix = """INSERT INTO unemployed VALUES """
+    with db.common_db() as con:
+        cur = con.cursor()
+        query_prefix = "INSERT INTO unemployed VALUES (?, ?, ?, ?, ?, ?, ?)"
+
         values = []
+        i = 0
         with open(path, 'r') as csvfile:
             reader = csv.reader(csvfile, delimiter=',', quotechar='"')
             next(reader)
             for row in reader:
+                i += 1
                 values.append((
-                    row[1]
+                    row[8],
+                    row[5],
+                    row[6],
+                    row[2],
+                    row[1],
+                    row[3],
+                    row[9]
                 ))
+                if i > 10000:
+                    cur.executemany(query_prefix, values)
+                    con.commit()
+                    i = 0
+                    values = []
 
-
+            cur.executemany(query_prefix, values)
+            con.commit()
