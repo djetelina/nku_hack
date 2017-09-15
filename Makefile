@@ -13,3 +13,4 @@ endif
 
 run:
 	cd src && python nku_hack.py
+
