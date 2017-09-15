@@ -17,3 +17,7 @@ endif
 run:
 	cd src && python nku_hack.py
 	cd frontend && npm i
+
+import:
+	python data_sources/importer.py
+
