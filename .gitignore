@@ -144,3 +144,8 @@ fabric.properties
 # FRONTEND
 node_modules
 .next
+*.iml
+.idea
+__pycache__
+frontend/package-lock.json
+
