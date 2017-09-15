@@ -25,10 +25,12 @@ out_data['age_start'].replace({r'O*d* *([0-9]{1,2}).*': r'\1'}, regex=True, inpl
 out_data['gender'].replace({'muž': 'm', 'žena': 'f', None: 'a'}, inplace=True)
 out_data.to_sql('age_groups', intermediate_db, if_exists='replace')
 
+
 with intermediate_db as conn:
     cur = conn.cursor()
-    all = cur.execute('SELECT DISTINCT (district) FROM age_groups')
+    all = cur.execute('SELECT DISTINCT district FROM age_groups').fetchall()
     for row in all:
         distr = row[0]
         ruian_id = find_distr_id(distr)
+        print(distr, ruian_id)
         cur.execute('UPDATE age_groups SET district=? WHERE district=?', (ruian_id, distr))
