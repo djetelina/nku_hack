@@ -148,4 +148,4 @@ node_modules
 .idea
 __pycache__
 frontend/package-lock.json
-
+ruianvo.db
