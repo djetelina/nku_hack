@@ -16,8 +16,8 @@ class Commuting:
         outgoing_percent = (self.outgoing / (self.incoming + self.outgoing))*100
         self.return_data = {
             'title': 'Dojíždění za prací', 'data': [
-                {'key': f'Přijíždějících: {incoming_percent}', 'value': self.incoming},
-                {'key': f'Odjíždějících: {outgoing_percent}', 'value': self.outgoing}
+                {'key': f'Přijíždějících: {incoming_percent}%', 'value': self.incoming},
+                {'key': f'Odjíždějících: {outgoing_percent}%', 'value': self.outgoing}
             ]
         }
 
