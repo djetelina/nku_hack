@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import csv
+import os
 import gzip
 from util import db
 import re
@@ -8,7 +9,6 @@ import re
 YEAR = '2011'
 SOURCE_FILE = 'data_sources/population/SLDB_OBYVATELSTVO.CSV'
 DUMP_NAME = 'csu_population'
-DESTINATION_FILE = 'dump/population.sql.gz'
 
 # Aby jsem mohl naparovat data, musim provest i rucni upravy.
 FIXES = {
@@ -67,7 +67,7 @@ def save_to_dump(table_name, data, metrics):
     Ulozi data do dumpu.
     """
     print('Ukládám do DB.')
-    gzf = gzip.GzipFile(DESTINATION_FILE, "w", compresslevel=9)
+    gzf = gzip.GzipFile(os.path.join('dump', '{}.sql.gz'.format(table_name)), "w", compresslevel=9)
 
     gzf.write(bytes('PRAGMA foreign_keys = OFF;\n', 'utf-8'))
     gzf.write(bytes('BEGIN TRANSACTION;\n', 'utf-8'))
