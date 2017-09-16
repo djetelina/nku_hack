@@ -3,12 +3,13 @@
 
 from flask import Blueprint
 from .suggest_locality import suggest_locality
-from views.age_groups import age_groups_all
-from views.commuting import commuting
+from .age_groups import age_groups_all
+from .commuting import commuting
 from .unemployed import unemployed
 from .death_cause import get_death_causes
 from .population import education, marital_status, nationality
 from .elections import elections
+from .to_survive import to_survive
 
 bp_api = Blueprint('api', __name__, url_prefix='/api/')
 
@@ -33,3 +34,5 @@ bp_api.add_url_rule('death-causes', 'death_causes', view_func=get_death_causes)
 
 # Volby do Poslanecke snemovny 2013
 bp_api.add_url_rule('elections', 'elections', view_func=elections)
+
+bp_api.add_url_rule('to_survive', 'to_survive', view_func=to_survive)
