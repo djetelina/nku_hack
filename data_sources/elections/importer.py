@@ -136,29 +136,68 @@ def process_data() -> List[Tuple[int, int, str, int]]:
         data = download_data(nuts)
 
         xml_file = xml.etree.ElementTree.fromstring(data)
-        for municipality in xml_file.findall('volby:OBEC', xml_namespaces):
-            municipality_id = municipality.get('CIS_OBEC')
 
+        # Prahu zpracovavam separatne, protoze je rozdelena na obvody a ja je chci secist
+        if nuts == 'CZ0100':
+            # Data pro Prahu chceme secist
+            prague_municipality_id = '554782'
+            prague_data_voters = 0
+            prague_data_parties = {}  # {party_id: <suma>}
+
+            for municipality in xml_file.findall('volby:OBEC', xml_namespaces):
+                prague_data_voters += int(municipality.find('volby:UCAST', xml_namespaces).get('ZAPSANI_VOLICI'))
+
+                for party in municipality.findall('volby:HLASY_STRANA', xml_namespaces):
+                    party_id = party.get('KSTRANA')
+                    try:
+                        prague_data_parties[party_id] += int(party.get('HLASY'))
+                    except KeyError:
+                        prague_data_parties[party_id] = int(party.get('HLASY'))
+
+            # Zapisu data
             response_data.append(
                 (
-                    municipality_id,
+                    prague_municipality_id,
                     'voters',
                     'Počet registrovaných voličů',
-                    municipality.find('volby:UCAST', xml_namespaces).get('ZAPSANI_VOLICI')
+                    prague_data_voters
                 )
             )
-            for party in municipality.findall('volby:HLASY_STRANA', xml_namespaces):
-                party_id = party.get('KSTRANA')
-                party_name = POLITICAL_PARTIES[party_id]
-                votes = party.get('HLASY')
+            for party_id, value in prague_data_parties.items():
+                response_data.append(
+                    (
+                        prague_municipality_id,
+                        party_id,
+                        POLITICAL_PARTIES[party_id],
+                        value
+                    )
+                )
+        # Zbytek se zpracovava standartne
+        else:
+            for municipality in xml_file.findall('volby:OBEC', xml_namespaces):
+                municipality_id = municipality.get('CIS_OBEC')
+
                 response_data.append(
                     (
                         municipality_id,
-                        party_id,
-                        party_name,
-                        votes
+                        'voters',
+                        'Počet registrovaných voličů',
+                        municipality.find('volby:UCAST', xml_namespaces).get('ZAPSANI_VOLICI')
                     )
                 )
+                for party in municipality.findall('volby:HLASY_STRANA', xml_namespaces):
+                    party_id = party.get('KSTRANA')
+                    party_name = POLITICAL_PARTIES[party_id]
+                    votes = party.get('HLASY')
+                    response_data.append(
+                        (
+                            municipality_id,
+                            party_id,
+                            party_name,
+                            votes
+                        )
+                    )
+    print(len(response_data))
     return response_data
 
 

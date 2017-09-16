@@ -31,7 +31,7 @@ def prepare_data(request_args: Dict[str, str], data_type: str) -> Tuple[List[Dic
         data_sum = sum([x[2] for x in data if x[0] != 'voters'])  # Pocet volicu celkem
         data_voters = sum([x[2] for x in data if x[0] == 'voters'])  # Pocet potencialnich volicu
         label = 'Volby do Poslanecké sněmovny 2013 (Účast {:.2f} % ({}/{}))'.format(
-            (data_sum / data_voters) * 100,
+            ((data_sum / data_voters) * 100) if data_voters else 0,
             '{:,}'.format(int(data_sum)).replace(',', ' '),
             '{:,}'.format(int(data_voters)).replace(',', ' ')
         )
@@ -49,7 +49,15 @@ def prepare_data(request_args: Dict[str, str], data_type: str) -> Tuple[List[Dic
                 'y': item[2],
             })
 
-    return sorted(response_data, key=lambda x: x['value'], reverse=True), label
+    # Zajima nas prvnich 9 a 10. je soucet vsech ostatnich
+    response_data = sorted(response_data, key=lambda x: x['value'], reverse=True)
+    new_response_data = response_data[:9]
+    others_sum = sum([x['value'] for x in response_data[9:]])
+    new_response_data.append({
+        'key': 'Ostatní {:.2f} %'.format(((others_sum / data_sum) * 100) if data_sum else 0),
+        'value': others_sum
+    })
+    return new_response_data, label
 
 
 @speaks_json
