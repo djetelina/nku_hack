@@ -77,18 +77,18 @@ class FormPartOne extends React.Component {
         fetch(`${constants.serverUri}/api/age-groups`, getInitForFetch(place))
                 .then(middleFetch)
                 .then((data) => {
-                    this.setState({ ageGroups: data.data });
+                    this.setState({ ageGroups: data.data.data });
                     console.log(data);
                 })
                 .catch(error);
         // Nezamestnanots sada
-        fetch(`${constants.serverUri}/api/unemployed`, getInitForFetch(place))
-                .then(middleFetch)
-                .then((data) => {
-                    this.setState({ unemployed: data.data.data });
-                    console.log(data);
-                })
-                .catch(error);
+        // fetch(`${constants.serverUri}/api/unemployed`, getInitForFetch(place))
+        //         .then(middleFetch)
+        //         .then((data) => {
+        //             this.setState({ unemployed: data.data.data });
+        //             console.log(data);
+        //         })
+        //         .catch(error);
     }
 
     renderStreets() {
