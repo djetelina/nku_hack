@@ -23,8 +23,7 @@ def run():
             month_ INT,
             type_ VARCHAR,
             value_ FLOAT,
-            type_name VARCHAR,
-            municipality_text VARCHAR
+            PRIMARY KEY (municipality_id, year_, month_, type_, value_)
         );
         """
         cur.execute(create_table)
@@ -42,7 +41,7 @@ def run():
 def parse(path):
     with db.common_db() as con:
         cur = con.cursor()
-        query_prefix = "INSERT INTO unemployed VALUES (?, ?, ?, ?, ?, ?, ?)"
+        query_prefix = "INSERT INTO unemployed VALUES (?, ?, ?, ?, ?)"
 
         values = []
         i = 0
@@ -57,8 +56,6 @@ def parse(path):
                     row[6],  # month_
                     row[2],  # type_
                     row[1],  # value_
-                    row[3],  # type_name
-                    row[9]   # municipality_text
                 ))
                 if i > 10000:
                     cur.executemany(query_prefix, values)
