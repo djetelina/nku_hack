@@ -36,6 +36,7 @@ def to_survive():
         response['error'] = "'region_id' or 'district_code' are missing"
         return response
 
+
     result = get_data_from_query(region_id, district_code)
     for row in result:
         row['key'] = "{} ({} let)".format(
@@ -45,7 +46,9 @@ def to_survive():
 
     response['data']['data'] = result
 
+
     return response
+
 
 
 def get_data_from_query(region_id, district_code):
@@ -53,6 +56,7 @@ def get_data_from_query(region_id, district_code):
     """
     Vraci stredni delka zivota a prumer nad celym statem.
     Metoda radi dle pohlavi (muzi/zeny)
+
     """
     with db.common_db(cursor=True) as cur:
         query = """
@@ -68,4 +72,5 @@ def get_data_from_query(region_id, district_code):
             ORDER BY sex ASC
         """
         cur.execute(query, (region_id, district_code, CHILD_YEAR_CODE))
+
         return [dict(x) for x in cur.fetchall()]
