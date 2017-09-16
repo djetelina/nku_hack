@@ -21,13 +21,13 @@ class Commuting:
     def incoming(self):
         with db(cursor=True) as cur:
             cur.execute('SELECT count FROM commuting WHERE `to` = ?', (self.district,))
-            return cur.fetchone()
+            return cur.fetchone()['count']
 
     @property
     def outgoing(self):
         with db(cursor=True) as cur:
             cur.execute('SELECT count FROM commuting WHERE `from` = ?', (self.district,))
-            return cur.fetchone()
+            return cur.fetchone()['count']
 
 
 @speaks_json
