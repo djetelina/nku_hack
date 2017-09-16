@@ -5,6 +5,36 @@ import constants from '../Constants';
 import ChartBar from './ChartBar';
 import ChartPie from './ChartPie';
 
+const DATA_FETCH = [
+    {
+        uri: '/api/age-groups',
+        prop: 'ageGroups',
+    },
+    {
+        uri: '/api/unemployed',
+        prop: 'unemployed',
+    },
+    {
+        uri: '/api/death-causes',
+        prop: 'deathCauses',
+    },
+    {
+        uri: '/api/education',
+        prop: 'education',
+    },
+    {
+        uri: '/api/nationality',
+        prop: 'nationality',
+    },
+    {
+        uri: '/api/marital-status',
+        prop: 'marital',
+    },
+    {
+        uri: '/api/commuting',
+        prop: 'commuting',
+    },
+];
 
 const customCss = `
     .location-button:hover {
@@ -93,63 +123,17 @@ class FormPartOne extends React.Component {
     }
 
     handleGetAddressData(place) {
-        this.setState({firstPart: null, selectedLocality: place})
-        // Vekova sada
-        fetch(`${constants.serverUri}/api/age-groups`, getInitForFetch(place))
+        this.setState({firstPart: null, selectedLocality: place});
+
+        for (let i = 0; i < DATA_FETCH.length; i++) {
+            fetch(`${constants.serverUri}${DATA_FETCH[i].uri}`, getInitForFetch(place))
                 .then(middleFetch)
                 .then((data) => {
-                    this.setState({ ageGroups: data.data });
+                    this.setState({ [DATA_FETCH[i].prop]: data.data });
                     console.log(data);
                 })
                 .catch(error);
-        // Nezamestnanots sada
-        fetch(`${constants.serverUri}/api/unemployed`, getInitForFetch(place))
-             .then(middleFetch)
-             .then((data) => {
-                 this.setState({ unemployed: data.data });
-                 console.log(data);
-             })
-             .catch(error);
-
-        fetch(`${constants.serverUri}/api/death-causes`, getInitForFetch(place))
-            .then(middleFetch)
-            .then((data) => {
-            this.setState({ deathCauses: data.data });
-            console.log(data);
-        })
-        .catch(error);
-
-        fetch(`${constants.serverUri}/api/education`, getInitForFetch(place))
-            .then(middleFetch)
-            .then((data) => {
-            this.setState({ education: data.data });
-            console.log(data);
-        })
-        .catch(error);
-
-        fetch(`${constants.serverUri}/api/nationality`, getInitForFetch(place))
-            .then(middleFetch)
-            .then((data) => {
-            this.setState({ nationality: data.data });
-            console.log(data);
-        })
-        .catch(error);
-
-        fetch(`${constants.serverUri}/api/marital-status`, getInitForFetch(place))
-            .then(middleFetch)
-            .then((data) => {
-            this.setState({ marital: data.data });
-            console.log(data);
-        })
-        .catch(error);
-
-        fetch(`${constants.serverUri}/api/commuting`, getInitForFetch(place))
-            .then(middleFetch)
-            .then((data) => {
-            this.setState({ commuting: data.data });
-            console.log(data);
-        })
-        .catch(error);
+        }
     }
 
     renderStreets() {
