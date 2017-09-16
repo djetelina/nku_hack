@@ -234,7 +234,7 @@ class FormPartOne extends React.Component {
                 <ChartBar data={this.state.unemployed} />
                 <ChartBar data={this.state.ageGroups} />
                 <ChartBar data={this.state.deathCauses} legend={true} legendAsHref={true} />
-                <div style={{ display: 'flex' }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                     <div className="pie-column">
                         <ChartPie data={this.state.education} />
                     </div>
