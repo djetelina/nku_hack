@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # coding=utf-8
-from views.decorators import speaks_json
+from views.decorators import speaks_json, allowed_post_only
 from flask import request, current_app
 from util.db import common_db as db
 from typing import Dict, Union, List
@@ -42,9 +42,10 @@ class AgeGroup:
 
 
 @speaks_json
-def age_groups_all() -> return_dict_type:
+@allowed_post_only
+def age_groups_all() -> Dict[str, return_dict_type]:
     """Vekove skupiny"""
     print(request.data)
     wanted_district = json.loads(request.data).get('district_code')
     current_app.logger.debug('wanted district: %s', wanted_district)
-    return AgeGroup(wanted_district).return_data
+    return dict(data=AgeGroup(wanted_district).return_data)
