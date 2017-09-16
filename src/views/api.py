@@ -4,6 +4,7 @@
 from flask import Blueprint
 from .suggest_locality import suggest_locality
 from views.age_groups import age_groups_all
+from views.commuting import commuting
 from .unemployed import unemployed
 from .death_cause import get_death_causes
 from .population import education, marital_status, nationality
@@ -18,6 +19,8 @@ bp_api.add_url_rule('suggest-locality', 'suggest_locality', view_func=suggest_lo
 bp_api.add_url_rule('unemployed', 'unemployed', view_func=unemployed)
 
 bp_api.add_url_rule('age-groups', 'age_groups', view_func=age_groups_all)
+
+bp_api.add_url_rule('commuting', 'commuting', view_func=commuting)
 
 # Data z CSU - obyvatelstvo
 bp_api.add_url_rule('education', 'education', view_func=education)
