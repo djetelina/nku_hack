@@ -16,7 +16,7 @@ else
 endif
 
 run:
-	cd frontend && npm run dev &
+	cd frontendapp && npm start &
 	cd src && python nku_hack.py
 
 import:

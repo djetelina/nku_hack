@@ -138,6 +138,7 @@ def process_data() -> List[Tuple[int, int, str, int]]:
         xml_file = xml.etree.ElementTree.fromstring(data)
         for municipality in xml_file.findall('volby:OBEC', xml_namespaces):
             municipality_id = municipality.get('CIS_OBEC')
+
             response_data.append(
                 (
                     municipality_id,
@@ -165,7 +166,7 @@ def save_to_dump(table_name: str, data: List[Tuple[int, int, str, int]]) -> None
     """
     Ulozi data do dumpu.
     """
-    print('Ukládám do dumpu.')
+
     gzf = gzip.GzipFile(os.path.join('dump', '{}.sql.gz'.format(table_name)), "w", compresslevel=9)
 
     gzf.write(bytes('PRAGMA foreign_keys = OFF;\n', 'utf-8'))

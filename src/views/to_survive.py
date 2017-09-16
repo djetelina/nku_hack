@@ -24,7 +24,7 @@ def to_survive():
     district_code = request_data.get("district_code")
 
     response = {
-        "result": False,
+        "result": True,
         "data": {
             "title": "Střední délka života",
             "data": None
@@ -33,7 +33,8 @@ def to_survive():
 
     # chybi nam id okresku
     if not region_id or not district_code:
-        response['error'] = "'region_id' or 'district_code' are missing"
+        response['message'] = "'region_id' or 'district_code' are missing"
+        response["result"] = False
         return response
 
     result = get_data_from_query(region_id, district_code)
@@ -53,6 +54,7 @@ def get_data_from_query(region_id, district_code):
     """
     Vraci stredni delka zivota a prumer nad celym statem.
     Metoda radi dle pohlavi (muzi/zeny)
+
     """
     with db.common_db(cursor=True) as cur:
         query = """
@@ -68,4 +70,5 @@ def get_data_from_query(region_id, district_code):
             ORDER BY sex ASC
         """
         cur.execute(query, (region_id, district_code, CHILD_YEAR_CODE))
+
         return [dict(x) for x in cur.fetchall()]

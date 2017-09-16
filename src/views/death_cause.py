@@ -4,7 +4,8 @@ from flask import request, json
 from util import db
 
 
-COLORS = ["#AD343E", "#474747", "#F2AF29", "#000000", "#E0E0CE"]
+#COLORS = ["#AD343E", "#474747", "#F2AF29", "#000000", "#E0E0CE"]
+COLORS = ["#1F77B4", "#AEC7E8", "#FF7F0E", "#FFBB78", "#2CA02C", "#98DF8A", "#D62728", "#FF9896", "#9467BD", "#C5B0D5"]
 
 
 @speaks_json
@@ -27,7 +28,7 @@ def get_death_causes():
             where district_id=? and dc.value > 0 and d.code=dc.cause_id 
             GROUP BY dc.year, dc.cause_id, d.name 
             ORDER BY val DESC 
-            LIMIT 5
+            LIMIT 8
         """
         cursor.execute(query, (district_code,))
         data = [{'x': item['disease_name'],

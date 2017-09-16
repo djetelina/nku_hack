@@ -7,7 +7,7 @@ from flask import Flask, logging
 from views.common import bp_common
 from views.api import bp_api
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path="")
 # sorry kluci,ale me se ty cirkularni import proste nelibi, takze blueprinty :)
 app.register_blueprint(bp_common)
 app.register_blueprint(bp_api)
