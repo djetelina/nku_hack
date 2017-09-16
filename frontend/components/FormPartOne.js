@@ -1,14 +1,23 @@
 import React from 'react';
-import { Icon, Input, Button, List } from 'semantic-ui-react';
+import { Icon, Input, Button, List, Header } from 'semantic-ui-react';
 
 import constants from '../Constants';
 import ChartBar from './ChartBar';
 import ChartPie from './ChartPie';
 
-const buttonStyle = {
-    border: 'none',
-    background: 'white',
-};
+
+const customCss = `
+    .location-button:hover {
+        border: 1px solid black;
+    }
+    .location-button {
+        background-color: white;
+        border: 1px solid white;
+        padding-top: 4px;
+        padding-bottom: 4px;
+        border-radius: 8px;
+    }
+`;
 
 function middleFetch (response) {
     return response.json();
@@ -37,6 +46,7 @@ class FormPartOne extends React.Component {
         this.state = {
             street: 'vlašimská',
             firstPart: null,
+            selectedLocality: null,
             unemployed: null,
             ageGroups: null,
             deathCauses: null,
@@ -72,14 +82,14 @@ class FormPartOne extends React.Component {
         fetch(`${constants.serverUri}/api/suggest-locality`, getInitForFetch(data))
         .then(middleFetch)
         .then(data => {
-            this.setState({ firstPart: data.data });
+            this.setState({ firstPart: data.data, selectedLocality: null });
             console.log(data.data);
         })
         .catch(error);
     }
 
     handleGetAddressData(place) {
-        this.setState({firstPart: {results: [place]}})
+        this.setState({firstPart: null, selectedLocality: place})
         // Vekova sada
         fetch(`${constants.serverUri}/api/age-groups`, getInitForFetch(place))
                 .then(middleFetch)
@@ -131,10 +141,10 @@ class FormPartOne extends React.Component {
                     <List.Icon name='marker' />
                     <List.Content>
                         <button
-                                onClick={this.handleGetAddressData.bind(this, place)}
-                                style={buttonStyle}
+                            className="location-button"
+                            onClick={this.handleGetAddressData.bind(this, place)}
                         >
-                            {place['municipality_name']}, {place['district_name']}, {place['region_name']}
+                            {place['region_name']}&nbsp;&rarr;&nbsp;{place['district_name']}&nbsp;&rarr;&nbsp;{place['municipality_name']}
                         </button>
                     </List.Content>
                 </List.Item>
@@ -144,9 +154,28 @@ class FormPartOne extends React.Component {
         }
     }
 
+    renderSelectedLocality() {
+        if (this.state.selectedLocality) {
+            let place = this.state.selectedLocality;
+            return (
+                <div style={{marginBottom: 20}}>
+                    <Header as='h4'>Data pro vybranou lokalitu:</Header>
+                    <span
+                        style={{fontSize: '1.5em'}}
+                    >
+                        {place['region_name']}&nbsp;&rarr;&nbsp;{place['district_name']}&nbsp;&rarr;&nbsp;{place['municipality_name']}
+                    </span>
+                </div>
+            );
+        } else {
+            return "";
+        }
+    }
+
     render () {
         return (
             <div>
+                <style>{customCss}</style>
                 <form action="" onSubmit={this.handleSubmit}>
                     <Input icon='search' placeholder='Název ulice' value={this.state.street} onChange={this.handleChange}  />
 
@@ -154,6 +183,8 @@ class FormPartOne extends React.Component {
                     <Button onClick={this.handleReset} secondary>Zrušit</Button>
                 </form>
                 <List>{this.renderStreets()}</List>
+
+                {this.renderSelectedLocality()}
 
                 <ChartBar data={this.state.unemployed} />
                 <ChartBar data={this.state.ageGroups} />
