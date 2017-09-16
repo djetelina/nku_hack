@@ -1,25 +1,22 @@
 import React from 'react';
-import {BarChart, Legend} from 'react-easy-chart';
+import {PieChart, Legend} from 'react-easy-chart';
 
 
 import { Header } from 'semantic-ui-react';
 
 
-class ChartBar extends React.Component {
+class ChartPie extends React.Component {
 
     renderGraph() {
         if (this.props.data) {
             return (
                 <div>
                     <Header as='h4'>{this.props.data.title}</Header>
-                    <BarChart
-                        //axisLabels={{x: 'Věk', y: 'Počet'}}
-                        axes
-                        grid
-                        colorBars
-                        width={800}
+                    <PieChart
+                        size={300}
                         data={this.props.data.data}
                     />
+                    <Legend data={this.props.data.data} dataId={'key'} config={{}} />
                 </div>
             );
         }
@@ -36,8 +33,11 @@ class ChartBar extends React.Component {
     }
 }
 
-ChartBar.propTypes = {
+ChartPie.propTypes = {
     data: React.PropTypes.object,
 };
 
-export default ChartBar;
+export default ChartPie;
+/**
+ * Created by tomaspavlacky on 9/16/17.
+ */

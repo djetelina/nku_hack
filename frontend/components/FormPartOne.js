@@ -3,6 +3,7 @@ import { Icon, Input, Button, List } from 'semantic-ui-react';
 
 import constants from '../Constants';
 import ChartBar from './ChartBar';
+import ChartPie from './ChartPie';
 
 const buttonStyle = {
     border: 'none',
@@ -39,6 +40,7 @@ class FormPartOne extends React.Component {
             unemployed: null,
             ageGroups: null,
             deathCauses: null,
+            education: null,
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -98,6 +100,14 @@ class FormPartOne extends React.Component {
             console.log(data);
         })
         .catch(error);
+
+        fetch(`${constants.serverUri}/api/education`, getInitForFetch(place))
+            .then(middleFetch)
+            .then((data) => {
+            this.setState({ education: data.data });
+            console.log(data);
+        })
+        .catch(error);
     }
 
     renderStreets() {
@@ -134,6 +144,7 @@ class FormPartOne extends React.Component {
                 <ChartBar data={this.state.unemployed} />
                 <ChartBar data={this.state.ageGroups} />
                 <ChartBar data={this.state.deathCauses} />
+                <ChartPie data={this.state.education} />
             </div>
         )
     }

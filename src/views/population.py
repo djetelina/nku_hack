@@ -41,11 +41,11 @@ def prepare_data(request_args, data_type):
         # Pripravim data pro view
         for item in data:
             response_data.append({
-                'label': item[0],
+                'key': item[0],
                 'value': item[1],
             })
 
-    return response_data
+    return {'data': response_data, 'title': 'Vzdělání'}
 
 
 @speaks_json
