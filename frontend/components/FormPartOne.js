@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import { Icon, Input, Button, List, Header } from 'semantic-ui-react';
 
 import constants from '../Constants';
@@ -92,6 +93,50 @@ class FormPartOne extends React.Component {
         this.handleGetAddressData = this.handleGetAddressData.bind(this);
     }
 
+    componentDidMount() {
+        window.onload = () => {
+            let stred = SMap.Coords.fromWGS84(14.41, 50.08);
+            this.map_component = new SMap(this._map_div, stred, 12);
+            this.map_component.addDefaultLayer(SMap.DEF_BASE).enable();
+            this.map_component.addDefaultControls();
+            this.marker_layer = new SMap.Layer.Marker();
+            this.map_component.addLayer(this.marker_layer).enable();
+
+        };
+    }
+
+    changeMapPosition(addressString) {
+        new SMap.Geocoder(addressString, (geocoder) => {
+            if (!geocoder.getResults()[0].results.length) {
+                return;
+            }
+
+            let vysledky = geocoder.getResults()[0].results;
+            if (vysledky.length) {
+                this.map_component.setCenter(vysledky[0].coords, false);
+                let options = {};
+                if (this.last_marker) {
+                    // napred odebereme ten puvodni
+                    this.marker_layer.removeMarker(this.last_marker);
+                }
+                this.last_marker = new SMap.Marker(vysledky[0].coords, "myMarker", options);
+                this.marker_layer.addMarker(this.last_marker);
+            }
+        });
+    }
+
+    changeMapToPlace(place) {
+        let fullName = [];
+        let keys = ["street_name", "municipality_part_name", "municipality_name", "district_name"];
+        keys.forEach((key) => {
+           if (place.hasOwnProperty(key)) {
+               fullName.push(place[key]);
+           }
+        });
+        let address = fullName.join(", ");
+        this.changeMapPosition(address);
+    }
+
     handleReset(event) {
         this.setState({
             street: '',
@@ -124,6 +169,7 @@ class FormPartOne extends React.Component {
 
     handleGetAddressData(place) {
         this.setState({firstPart: null, selectedLocality: place});
+        this.changeMapToPlace(place);
 
         for (let i = 0; i < DATA_FETCH.length; i++) {
             fetch(`${constants.serverUri}${DATA_FETCH[i].uri}`, getInitForFetch(place))
@@ -167,6 +213,7 @@ class FormPartOne extends React.Component {
                     >
                         {place['region_name']}&nbsp;&rarr;&nbsp;{place['district_name']}&nbsp;&rarr;&nbsp;{place['municipality_name']}
                     </span>
+
                 </div>
             );
         } else {
@@ -174,9 +221,32 @@ class FormPartOne extends React.Component {
         }
     }
 
+    renderCharts() {
+        if (!this.state.selectedLocality) {
+            return null;
+        }
+
+        return (
+            <div>
+                <ChartBar data={this.state.unemployed} />
+                <ChartBar data={this.state.ageGroups} />
+                <ChartBar data={this.state.deathCauses} legend={true} legendAsHref={true} />
+                <ChartPie data={this.state.education} />
+                <ChartPie data={this.state.nationality} />
+                <ChartPie data={this.state.marital} />
+                <ChartPie data={this.state.commuting} />
+            </div>
+        );
+    }
+
+
     render () {
         return (
             <div>
+
+                <script src="https://api.mapy.cz/loader.js"></script>
+                <script type="text/javascript">Loader.load()</script>
+
                 <style>{customCss}</style>
                 <form action="" onSubmit={this.handleSubmit}>
                     <Input icon='search' placeholder='Název ulice' value={this.state.street} onChange={this.handleChange}  />
@@ -187,14 +257,9 @@ class FormPartOne extends React.Component {
                 <List>{this.renderStreets()}</List>
 
                 {this.renderSelectedLocality()}
+                <div id="m" ref={(c) => {this._map_div = c;}} style={{height:200, widht:'100%', marginTop: 10, marginBottom: 10}}></div>
+                {this.renderCharts()}
 
-                <ChartBar data={this.state.unemployed} />
-                <ChartBar data={this.state.ageGroups} />
-                <ChartBar data={this.state.deathCauses} legend={true} legendAsHref={true} />
-                <ChartPie data={this.state.education} />
-                <ChartPie data={this.state.nationality} />
-                <ChartPie data={this.state.marital} />
-                <ChartPie data={this.state.commuting} />
             </div>
         )
     }
