@@ -28,5 +28,5 @@ db-dump:
 db-recreate:
 	rm -f db/db.sqlite
 	zcat dump/* | sqlite3 db/db.sqlite
-	echo "vacuum optimize;" | sqlite3 db/db.sqlite
+	echo "vacuum;" | sqlite3 db/db.sqlite
 
