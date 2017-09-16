@@ -36,13 +36,20 @@ def prepare_data(request_args: Dict[str, str], data_type: str) -> Tuple[List[Dic
             '{:,}'.format(int(data_voters)).replace(',', ' ')
         )
         for item in data:
-            percent = (item[2] / data_sum) * 100
+            if item[0] == 'voters':
+                # Celkovy pocet volicu nechceme
+                continue
+            # Data pro celkovy pocet volicu muze byt 0 a v tom pripade bych delil 0
+            if data_sum:
+                percent = (item[2] / data_sum) * 100
+            else:
+                percent = 0
             response_data.append({
                 'key': '{} {:.2f} %'.format(item[1], percent),
                 'value': item[2],
             })
 
-    return response_data, label
+    return sorted(response_data, key=lambda x: x['value'], reverse=True), label
 
 
 @speaks_json
