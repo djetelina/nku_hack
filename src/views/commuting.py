@@ -14,13 +14,13 @@ class Commuting:
         self._incoming = None
         self._outgoing = None
         # Vypocteme si procenta, abychom je mohli dat k legende
-        incoming_percent = int((self.incoming / (self.incoming + self.outgoing))*100)
-        outgoing_percent = int((self.outgoing / (self.incoming + self.outgoing))*100)
+        # incoming_percent = int((self.incoming / (self.incoming + self.outgoing))*100)
+        # outgoing_percent = int((self.outgoing / (self.incoming + self.outgoing))*100)
         self.return_data = {
             'title': 'Dojíždění za prací', 'data': [
                 # key - popisek hodnoty v legende, value - hodnota
-                {'key': f'Přijíždějících: {incoming_percent}%', 'value': self.incoming},
-                {'key': f'Odjíždějících: {outgoing_percent}%', 'value': self.outgoing}
+                {'key': f'Přijíždějících: {self.incoming}%', 'value': self.incoming},
+                {'key': f'Odjíždějících: {self.outgoing}', 'value': self.outgoing}
             ]
         }
 
