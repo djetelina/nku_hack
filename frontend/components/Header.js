@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import Link from 'next/link';
 
-import { Modal, Header, Button, List } from 'semantic-ui-react';
+import { Header } from 'semantic-ui-react';
 
 const containerStyle = {
     marginTop: '3em',

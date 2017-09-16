@@ -45,7 +45,7 @@ def prepare_data(request_args, data_type):
                 'value': item[1],
             })
 
-    return {'data': response_data, 'title': 'Vzdělání'}
+    return response_data
 
 
 @speaks_json
@@ -58,8 +58,10 @@ def education():
     print(request.data)
     response_data = prepare_data(json.loads(request.data), 'education')
     print(response_data)
+    pack = {'data': response_data, 'title': 'Vzdělání'}
 
-    return dict(result=True if response_data else False, data=response_data)
+
+    return dict(result=True if response_data else False, data=pack)
 
 
 @speaks_json
@@ -70,8 +72,9 @@ def marital_status():
     Vrati data pro rodinny stav.
     """
     response_data = prepare_data(json.loads(request.data), 'marital_status')
+    pack = {'data': response_data, 'title': 'Rodinný stav'}
 
-    return dict(result=True if response_data else False, data=response_data)
+    return dict(result=True if response_data else False, data=pack)
 
 
 @speaks_json
@@ -82,5 +85,6 @@ def nationality():
     Vrati data pro narodnost.
     """
     response_data = prepare_data(json.loads(request.data), 'nationality')
+    pack = {'data': response_data, 'title': 'Národnost'}
 
-    return dict(result=True if response_data else False, data=response_data)
+    return dict(result=True if response_data else False, data=pack)

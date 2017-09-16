@@ -41,6 +41,7 @@ class FormPartOne extends React.Component {
             ageGroups: null,
             deathCauses: null,
             education: null,
+            nationality: null,
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -56,6 +57,8 @@ class FormPartOne extends React.Component {
             unemployed: null,
             ageGroups: null,
             deathCauses: null,
+            education: null,
+            nationality: null,
         });
     }
 
@@ -109,6 +112,16 @@ class FormPartOne extends React.Component {
             console.log(data);
         })
         .catch(error);
+
+        fetch(`${constants.serverUri}/api/nationality`, getInitForFetch(place))
+            .then(middleFetch)
+            .then((data) => {
+            this.setState({ nationality: data.data });
+            console.log(data);
+        })
+        .catch(error);
+
+
     }
 
     renderStreets() {
@@ -146,6 +159,7 @@ class FormPartOne extends React.Component {
                 <ChartBar data={this.state.ageGroups} />
                 <ChartBar data={this.state.deathCauses} />
                 <ChartPie data={this.state.education} />
+                <ChartPie data={this.state.nationality} />
             </div>
         )
     }
