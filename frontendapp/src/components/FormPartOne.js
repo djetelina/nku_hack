@@ -201,6 +201,7 @@ class FormPartOne extends React.Component {
         }
     }
 
+
     renderStreets() {
         if (this.state.firstPart) {
             return this.state.firstPart.results.map((place, i) =>
@@ -211,6 +212,7 @@ class FormPartOne extends React.Component {
                             onClick={this.handleGetAddressData.bind(this, place)}
                         >
                             {place['region_name']}&nbsp;&rarr;&nbsp;{place['district_name']}&nbsp;&rarr;&nbsp;{place['municipality_name']}
+                            {(place.street_name) ? <span>&nbsp;&rarr;&nbsp;{place.street_name}</span> : ""}
                         </button>
                     </List.Content>
                 </List.Item>
