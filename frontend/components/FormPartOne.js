@@ -206,7 +206,7 @@ class FormPartOne extends React.Component {
 
                 <ChartBar data={this.state.unemployed} />
                 <ChartBar data={this.state.ageGroups} />
-                <ChartBar data={this.state.deathCauses} legend={true} />
+                <ChartBar data={this.state.deathCauses} legend={true} legendAsHref={true} />
                 <ChartPie data={this.state.education} />
                 <ChartPie data={this.state.nationality} />
                 <ChartPie data={this.state.marital} />

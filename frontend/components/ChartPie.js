@@ -16,7 +16,7 @@ class ChartPie extends React.Component {
                         size={300}
                         data={this.props.data.data}
                     />
-                    <Legend data={this.props.data.data} dataId={'key'} config={{}} />
+                    <Legend data={this.props.data.data} dataId={'key'} />
                 </div>
             );
         }
