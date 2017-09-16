@@ -16,7 +16,9 @@ class AgeGroup:
         self.district = str(district)
         self.gender: str = gender
         self._db_data: List[sqlite3.Row] = None
-        self.return_data: return_dict_type = {'title': 'Věk obyvatelstva v okrsku', 'data': []}
+        self.return_data: return_dict_type = {
+            'title': 'Věk obyvatelstva v okrsku', 'data': [], 'axisLabels': {'x': 'Věk', 'y': 'Počet'}
+        }
         self._get_db_data()
         self._format_data()
 
