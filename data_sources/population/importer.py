@@ -280,10 +280,10 @@ def marital_status(list_locations, ruian_data):
         header = next(reader)
 
         metrics = [
-            ('single', header.index('vse1121'), 'Svobodní'),
-            ('maried', header.index('vse1131'), 'Ženatí'),
-            ('divorced', header.index('vse4121'), 'Rozvedení'),
-            ('widowed', header.index('vse4121'), 'Ovdovělí'),
+            ('single', header.index('vse1121'), 'Svobodné/í'),
+            ('maried', header.index('vse1131'), 'Ženatí/Vdané'),
+            ('divorced', header.index('vse4121'), 'Rozvedené/í'),
+            ('widowed', header.index('vse4121'), 'Ovdovělé/í'),
         ]
 
         data = create_data(reader, metrics, list_locations, ruian_data)
