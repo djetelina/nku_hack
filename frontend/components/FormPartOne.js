@@ -48,6 +48,9 @@ const customCss = `
         padding-bottom: 4px;
         border-radius: 8px;
     }
+    .pie-column {
+        margin-right: 1em;
+    }
 `;
 
 function middleFetch (response) {
@@ -231,9 +234,17 @@ class FormPartOne extends React.Component {
                 <ChartBar data={this.state.unemployed} />
                 <ChartBar data={this.state.ageGroups} />
                 <ChartBar data={this.state.deathCauses} legend={true} legendAsHref={true} />
-                <ChartPie data={this.state.education} />
-                <ChartPie data={this.state.nationality} />
-                <ChartPie data={this.state.marital} />
+                <div style={{ display: 'flex' }}>
+                    <div className="pie-column">
+                        <ChartPie data={this.state.education} />
+                    </div>
+                    <div className="pie-column">
+                        <ChartPie data={this.state.nationality} />
+                    </div>
+                    <div className="pie-column">
+                        <ChartPie data={this.state.marital} />
+                    </div>
+                </div>
                 <ChartPie data={this.state.commuting} />
             </div>
         );
