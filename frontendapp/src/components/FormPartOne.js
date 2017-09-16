@@ -36,6 +36,10 @@ const DATA_FETCH = [
         uri: '/api/commuting',
         prop: 'commuting',
     },
+    {
+        uri: '/api/to_survive',
+        prop: 'to_survive',
+    },
 ];
 
 const customCss = `
@@ -95,6 +99,7 @@ class FormPartOne extends React.Component {
             nationality: null,
             marital: null,
             commuting: null,
+            toSurvive: null,
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -161,6 +166,7 @@ class FormPartOne extends React.Component {
             nationality: null,
             marital: null,
             commuting: null,
+            toSurvive: null,
         });
     }
 
@@ -260,6 +266,25 @@ class FormPartOne extends React.Component {
                 </div>
                 <hr />
                 <ChartPie data={this.state.commuting} />
+                {this.state.toSurvive &&
+                <div style={{position: "relative", width: "50%"}}>
+                    <div style={{position: "absolute", right: 0, bottom: 0}}>
+                        <h2>
+                            {this.state.toSurvive.data[0]['value'] > this.state.toSurvive.data[1]['value'] ? "Muži" : "Ženy"}
+                            &nbsp;žijí dele o &nbsp;
+                            {
+                                Math.abs(
+                                    parseFloat(
+                                        this.state.toSurvive.data[0]['value'] -
+                                        this.state.toSurvive.data[1]['value']
+                                    ).toFixed(2)
+                                )
+                            } let
+                        </h2>
+                    </div>
+                    <ChartPie data={this.state.toSurvive}/>
+                </div>
+                }
             </div>
         );
     }
