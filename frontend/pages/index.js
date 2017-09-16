@@ -3,11 +3,8 @@ import { bindActionCreators } from 'redux';
 import withRedux from 'next-redux-wrapper';
 
 import { initStore, startClock, addCount, serverRenderClock } from '../store';
-import Layout from '../components/MyLayout.js';
 import FormPartOne from '../components/FormPartOne';
 import { Icon, Input } from 'semantic-ui-react'
-
-//import logo from '../static/logo.png';
 
 
 class Counter extends React.Component {
@@ -28,10 +25,12 @@ class Counter extends React.Component {
 
     render () {
         return (
-            <Layout>
-
+            <div>
+                <link rel='stylesheet' href='//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.2/semantic.min.css' />
+                <script src="https://api.mapy.cz/loader.js"></script>
+                <script type="text/javascript">Loader.load()</script>
                 <FormPartOne />
-            </Layout>
+            </div>
         )
     }
 }

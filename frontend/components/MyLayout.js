@@ -3,12 +3,10 @@ import { Container } from 'semantic-ui-react';
 
 
 const Layout = (props) => (
-    <Container>
-        <Head>
-            <link rel='stylesheet' href='//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.2/semantic.min.css' />
-        </Head>
+    <div>
+        <link rel='stylesheet' href='//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.2/semantic.min.css' />
         {props.children}
-    </Container>
+    </div>
 );
 
 export default Layout

@@ -5,6 +5,7 @@ import constants from '../Constants';
 import ChartBar from './ChartBar';
 import ChartPie from './ChartPie';
 import HeaderComp from './Header';
+import FooterComp from './Footer';
 
 const DATA_FETCH = [
     {
@@ -59,6 +60,7 @@ const customCss = `
     hr {
         margin-bottom: 2em;
         margin-top: 2em;
+        border solid 2px gray;
     }
 `;
 
@@ -87,7 +89,7 @@ class FormPartOne extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            street: 'vlašimská',
+            street: '',
             firstPart: null,
             selectedLocality: null,
             unemployed: null,
@@ -219,8 +221,8 @@ class FormPartOne extends React.Component {
         if (this.state.selectedLocality) {
             let place = this.state.selectedLocality;
             return (
-                <div style={{marginBottom: 20}}>
-                    <Header as='h4'>Data pro vybranou lokalitu:</Header>
+                <div style={{marginBottom: '3em'}}>
+                    <Header as='h4'>Přehled ppro vybrané místo:</Header>
                     <span
                         style={{fontSize: '1.5em'}}
                     >
@@ -288,9 +290,6 @@ class FormPartOne extends React.Component {
     render () {
         return (
             <div>
-                <script src="https://api.mapy.cz/loader.js"></script>
-                <script type="text/javascript">Loader.load()</script>
-
                 <div style={{position: 'absolute', top: 0, bottom: 0, left: 0}}>
 
                     <div id="m" ref={(c) => {this._map_div = c;}} style={{height: '100%', width: 300}}></div>
@@ -308,6 +307,8 @@ class FormPartOne extends React.Component {
 
                     {this.renderSelectedLocality()}
                     {this.renderCharts()}
+
+                    <FooterComp />
                 </div>
             </div>
         )
