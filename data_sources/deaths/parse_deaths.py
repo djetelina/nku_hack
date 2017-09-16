@@ -85,7 +85,7 @@ def parse_file(path):
     for i in data:
         int_district = int(i[8])
         ruian_district = CSU_101_TO_RUIAN[int_district]
-        sex = 1 if i[4] == '1' else 2  # Predelame cisselnik pohlavi na spravne hodnoty :-)
+        sex = 1 if i[4] == '1' else 0  # Predelame cisselnik pohlavi na spravne hodnoty :-)
         year = int(i[9])
         code = i[6]
         value = int(i[1])
