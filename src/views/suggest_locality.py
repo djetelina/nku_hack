@@ -10,7 +10,7 @@ from typing import List, Dict, Any
 @speaks_json
 @allowed_post_only
 def suggest_locality() -> Dict[str, Any]:
-    """
+    """s
     Vyhleda lokalitu podle zadaneho retezce
     """
     query = json.loads(request.data).get("query")
@@ -53,18 +53,17 @@ def get_by_street(c: sqlite3.Cursor, query: str) -> List[Dict[str, Any]]:
             k.nazev as region_name,
             k.kod as region_id  
           FROM ulice u
-          JOIN obce ob ON (lower(u.nazev) LIKE ? AND ob.kod = u.obec_kod)
+          JOIN obce ob ON (UPPER(SUBSTR(u.nazev, 1, 1)) || LOWER(SUBSTR(u.nazev, 2)) LIKE ? AND ob.kod = u.obec_kod)
           JOIN okresy ok ON ok.kod = ob.okres_kod 
           JOIN vusc k ON k.kod = ok.vusc_kod
           ORDER BY k.nazev, ok.nazev, ob.nazev, u.nazev
           LIMIT 11
-        """, ("{}%".format(query.lower()), ))
+        """, ("{}%".format(query.capitalize()), ))
 
     return [dict(x) for x in c.fetchall()]
 
 
-def get_by_municipality_part(c, query):
-    # type: (sqlite3.Cursor, str) -> List[Dict[str, Any]]
+def get_by_municipality_part(c: sqlite3.Cursor, query: str) -> List[Dict[str, Any]]:
     """
     Najde lokality podle nazvu casti obce.
     :param c:
@@ -82,11 +81,11 @@ def get_by_municipality_part(c, query):
             k.nazev as region_name,
             k.kod as region_id  
           FROM casti_obci co
-          JOIN obce ob ON (lower(co.nazev) LIKE ? AND ob.kod = co.obec_kod)
+          JOIN obce ob ON (UPPER(SUBSTR(co.nazev, 1, 1)) || LOWER(SUBSTR(co.nazev, 2)) LIKE ? AND ob.kod = co.obec_kod)
           JOIN okresy ok ON ok.kod = ob.okres_kod 
           JOIN vusc k ON k.kod = ok.vusc_kod
           ORDER BY k.nazev, ok.nazev, ob.nazev, co.nazev
           LIMIT 11
-        """, ("{}%".format(query.lower()), ))
+        """, ("{}%".format(query.capitalize()), ))
 
     return [dict(x) for x in c.fetchall()]

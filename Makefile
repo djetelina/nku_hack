@@ -12,6 +12,7 @@ ifneq ($(findstring Python 3.6, ${PYTHON_VERSION}), Python 3.6)
 	@exit 1
 else
 	pip install -r requirements.txt
+	cd frontend && npm i
 endif
 
 run:
