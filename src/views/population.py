@@ -13,7 +13,7 @@ def prepare_data(request_args, data_type):
     municipality_code = request_args.get('municipality_code')
     district_code = request_args.get('district_code')
     region_code = request_args.get('region_id')
-    print(region_code, district_code, municipality_code)
+
     response_data = []
     with db.common_db() as connection:
         cursor = connection.cursor()
@@ -39,9 +39,12 @@ def prepare_data(request_args, data_type):
             data = []
 
         # Pripravim data pro view
+        data = list(data)
+        data_sum = sum([x[1] for x in data])
         for item in data:
+            percent = (item[1] / data_sum) * 100
             response_data.append({
-                'key': item[0],
+                'key': '{} {:.2f} %'.format(item[0], percent),
                 'value': item[1],
             })
 
@@ -55,11 +58,8 @@ def education():
     """
     Vrati data pro vzdelani.
     """
-    print(request.data)
     response_data = prepare_data(json.loads(request.data), 'education')
-    print(response_data)
     pack = {'data': response_data, 'title': 'Vzdělání'}
-
 
     return dict(result=True if response_data else False, data=pack)
 
