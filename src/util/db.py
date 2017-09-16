@@ -35,4 +35,3 @@ def ruian_db(cursor=False) -> DB:
     :return: ctx manager
     """
     return DB(config.RUIAN_PATH, return_cursor=cursor)
-

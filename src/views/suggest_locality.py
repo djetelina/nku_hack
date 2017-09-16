@@ -3,12 +3,13 @@ from views.decorators import speaks_json, allowed_post_only
 from flask import request
 from util import db
 import json
+import sqlite3
+from typing import List, Dict, Any
 
 
 @speaks_json
 @allowed_post_only
-def suggest_locality():
-    # type: () -> Dict[str, Any]
+def suggest_locality() -> Dict[str, Any]:
     """
     Vyhleda lokalitu podle zadaneho retezce
     """
@@ -34,8 +35,7 @@ def suggest_locality():
     return dict(result=True, data=data)
 
 
-def get_by_street(c, query):
-    # type: (sqlite3.Cursor, str) -> List[Dict[str, Any]]
+def get_by_street(c: sqlite3.Cursor, query: str) -> List[Dict[str, Any]]:
     """
     Najde lokality podle nazvu ulice.
     :param c:
