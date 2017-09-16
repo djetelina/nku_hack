@@ -8,15 +8,6 @@ import { Header } from 'semantic-ui-react';
 
 
 class GraphUnemployed extends React.Component {
-
-    constructor(props) {
-        super(props);
-    }
-
-    componentDidMount() {
-        //var test = d3.histogram(this.props);
-    }
-
     renderGraph() {
         if (this.props.data) {
             return (
@@ -24,6 +15,11 @@ class GraphUnemployed extends React.Component {
                     <Header as='h4'>Nezaměstnanost</Header>
                     <div id="graph-unemployed" />
                     <BarChart
+                        axisLabels={{x: 'Roky', y: 'Počet'}}
+                        axes
+                        grid
+                        colorBars
+                        width={800}
                         data={this.props.data}
                     />
                 </div>

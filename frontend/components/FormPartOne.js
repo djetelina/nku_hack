@@ -51,7 +51,7 @@ class FormPartOne extends React.Component {
         this.setState({
             street: '',
             firstPart: null,
-            unemployed: '',
+            unemployed: null,
             ageGroups: null,
         });
     }
@@ -73,11 +73,19 @@ class FormPartOne extends React.Component {
     }
 
     handleGetAddressData(place) {
+        // Vekova sada
         fetch(`${constants.serverUri}/api/age-groups`, getInitForFetch(place))
                 .then(middleFetch)
                 .then((data) => {
                     this.setState({ ageGroups: data.data });
-                    console.log('Druhy dotaz pro data do grafu');
+                    console.log(data);
+                })
+                .catch(error);
+        // Nezamestnanots sada
+        fetch(`${constants.serverUri}/api/unemployed?municipality_code=500011`)
+                .then(middleFetch)
+                .then((data) => {
+                    this.setState({ unemployed: data.data });
                     console.log(data);
                 })
                 .catch(error);
@@ -113,8 +121,8 @@ class FormPartOne extends React.Component {
                     <Button onClick={this.handleReset} secondary>Zrušit</Button>
                 </form>
                 <List>{this.renderStreets()}</List>
-                <GraphUnemployed />
-                <GraphAgeGroup data={this.state.ageGroups}/>
+                <GraphUnemployed data={this.state.unemployed} />
+                <GraphAgeGroup data={this.state.ageGroups} />
             </div>
         )
     }

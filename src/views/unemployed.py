@@ -42,8 +42,8 @@ def unemployed():
 
     # muzi jsou rozdil mezi vsichni a zeny
     men = [{
-        "value": all[i].get("value") - women[i].get("value"),
-        "date": all[i].get("date"),
+        "y": all[i].get("y") - women[i].get("y"),
+        "x": all[i].get("x"),
         "color": all[i].get("color")
     } for i in range(LIMIT)]
 
@@ -65,14 +65,14 @@ def get_q(municipality_code, type_, color):
     with db.common_db(cursor=True) as cur:
         query = """
             SELECT
-                value_ AS value,
-                year_ || "-" || month_ AS date,
+                value_ AS y,
+                year_ || "-" || month_ AS x,
                 ? AS color
             FROM unemployed
             WHERE
                 municipality_id = ? AND
                 type_ = ?
-            ORDER BY date DESC
+            ORDER BY x DESC
             LIMIT ?
         """
         cur.execute(query, (color, municipality_code, type_, LIMIT))
