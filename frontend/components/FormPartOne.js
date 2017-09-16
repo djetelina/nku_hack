@@ -2,8 +2,7 @@ import React from 'react';
 import { Icon, Input, Button, List } from 'semantic-ui-react';
 
 import constants from '../Constants';
-import GraphUnemployed from './GraphUnemployed';
-import GraphAgeGroup from './GraphAgeGroup';
+import ChartBar from './ChartBar';
 
 const buttonStyle = {
     border: 'none',
@@ -39,6 +38,7 @@ class FormPartOne extends React.Component {
             firstPart: null,
             unemployed: null,
             ageGroups: null,
+            deathCauses: null,
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -78,23 +78,23 @@ class FormPartOne extends React.Component {
         fetch(`${constants.serverUri}/api/age-groups`, getInitForFetch(place))
                 .then(middleFetch)
                 .then((data) => {
-                    this.setState({ ageGroups: data.data.data });
+                    this.setState({ ageGroups: data.data });
                     console.log(data);
                 })
                 .catch(error);
         // Nezamestnanots sada
-        // fetch(`${constants.serverUri}/api/unemployed`, getInitForFetch(place))
-        //         .then(middleFetch)
-        //         .then((data) => {
-        //             this.setState({ unemployed: data.data.data });
-        //             console.log(data);
-        //         })
-        //         .catch(error);
+        fetch(`${constants.serverUri}/api/unemployed`, getInitForFetch(place))
+             .then(middleFetch)
+             .then((data) => {
+                 this.setState({ unemployed: data.data });
+                 console.log(data);
+             })
+             .catch(error);
 
         fetch(`${constants.serverUri}/api/death-causes`, getInitForFetch(place))
             .then(middleFetch)
             .then((data) => {
-            this.setState({ deathCauses: data.data.data });
+            this.setState({ deathCauses: data.data });
             console.log(data);
         })
         .catch(error);
@@ -130,8 +130,10 @@ class FormPartOne extends React.Component {
                     <Button onClick={this.handleReset} secondary>Zrušit</Button>
                 </form>
                 <List>{this.renderStreets()}</List>
-                <GraphUnemployed data={this.state.unemployed} />
-                <GraphAgeGroup data={this.state.ageGroups} />
+
+                <ChartBar data={this.state.unemployed} />
+                <ChartBar data={this.state.ageGroups} />
+                <ChartBar data={this.state.deathCauses} />
             </div>
         )
     }
