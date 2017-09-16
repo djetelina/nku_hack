@@ -66,7 +66,7 @@ def save_to_dump(table_name, data, metrics):
     """
     Ulozi data do dumpu.
     """
-    print('Ukládám do DB.')
+    print('Ukládám do dumpu.')
     gzf = gzip.GzipFile(os.path.join('dump', '{}.sql.gz'.format(table_name)), "w", compresslevel=9)
 
     gzf.write(bytes('PRAGMA foreign_keys = OFF;\n', 'utf-8'))
@@ -202,7 +202,7 @@ def create_data(reader, metrics, list_locations, ruian_data):
     :param ruian_data:
     :return:
     """
-    print('vytvářím data pro uložení do DB.')
+    print('vytvářím data pro uložení do dumpu.')
     data = {
         'kraj': {},
         'okres': {},

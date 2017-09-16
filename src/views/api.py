@@ -8,6 +8,7 @@ from views.commuting import commuting
 from .unemployed import unemployed
 from .death_cause import get_death_causes
 from .population import education, marital_status, nationality
+from .elections import elections
 
 bp_api = Blueprint('api', __name__, url_prefix='/api/')
 
@@ -29,3 +30,6 @@ bp_api.add_url_rule('nationality', 'nationality', view_func=nationality)
 
 # Smrtaci
 bp_api.add_url_rule('death-causes', 'death_causes', view_func=get_death_causes)
+
+# Volby do Poslanecke snemovny 2013
+bp_api.add_url_rule('elections', 'elections', view_func=elections)

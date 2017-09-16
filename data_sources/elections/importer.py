@@ -128,31 +128,31 @@ def process_data():
     """
     Stazene soubory obsahujici data k vysledkum voleb se zpracuji a vygeneruje dict s daty.
     """
+    xml_namespaces = {'volby': 'http://www.volby.cz/ps/'}
     response_data = []
     for nuts in NUTS:
         data = download_data(nuts)
 
         xml_file = xml.etree.ElementTree.fromstring(data)
-
-        for municipality in xml_file.iter('OBEC'):
-            municipality_id = municipality.find('CIS_OBEC')
+        for municipality in xml_file.findall('volby:OBEC', xml_namespaces):
+            municipality_id = municipality.get('CIS_OBEC')
             response_data.append(
                 (
                     municipality_id,
                     'voters',
                     'Počet registrovaných voličů',
-                    municipality.find('ZAPSANI_VOLICI')
+                    municipality.find('volby:UCAST', xml_namespaces).get('ZAPSANI_VOLICI')
                 )
             )
-            for party in municipality.iter('HLASY_STRANA'):
-                party_id = party.find('KSTRANA').text
-                party = POLITICAL_PARTIES[party_id]
-                votes = party.find('HLASY')
+            for party in municipality.findall('volby:HLASY_STRANA', xml_namespaces):
+                party_id = party.get('KSTRANA')
+                party_name = POLITICAL_PARTIES[party_id]
+                votes = party.get('HLASY')
                 response_data.append(
                     (
                         municipality_id,
                         party_id,
-                        party,
+                        party_name,
                         votes
                     )
                 )
@@ -163,7 +163,7 @@ def save_to_dump(table_name, data):
     """
     Ulozi data do dumpu.
     """
-    print('Ukládám do DB.')
+    print('Ukládám do dumpu.')
     gzf = gzip.GzipFile(os.path.join('dump', '{}.sql.gz'.format(table_name)), "w", compresslevel=9)
 
     gzf.write(bytes('PRAGMA foreign_keys = OFF;\n', 'utf-8'))
