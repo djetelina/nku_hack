@@ -34,5 +34,5 @@ def get_death_causes():
         data = [{'x': item['disease_name'],
                 'y': item['val'], 'color': color} for item, color in zip(cursor.fetchall(), COLORS) if item]
 
-        return dict(result=True, data={'data': data, 'title': "Nejčastější úmrtí v okrese jsou na..."})
+        return dict(result=True, data={'data': data, 'title': "Nemoci na které se v okresu nejčastěji umírá"})
 

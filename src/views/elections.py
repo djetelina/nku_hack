@@ -46,16 +46,17 @@ def prepare_data(request_args: Dict[str, str], data_type: str) -> Tuple[List[Dic
                 percent = 0
             response_data.append({
                 'x': '{} {:.2f} %'.format(item[1], percent),
-                'y': item[2],
+                'y': percent,
             })
 
     # Zajima nas prvnich 9 a 10. je soucet vsech ostatnich
-    response_data = sorted(response_data, key=lambda x: x['value'], reverse=True)
+    response_data = sorted(response_data, key=lambda x: x['y'], reverse=True)
     new_response_data = response_data[:9]
-    others_sum = sum([x['value'] for x in response_data[9:]])
+    others_sum = sum([x['y'] for x in response_data[9:]])
+    percents = others_sum
     new_response_data.append({
-        'key': 'Ostatní {:.2f} %'.format(((others_sum / data_sum) * 100) if data_sum else 0),
-        'value': others_sum
+        'x': 'Ostatní {:.2f} %'.format(percents),
+        'y': percents
     })
     return new_response_data, label
 

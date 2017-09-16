@@ -59,7 +59,7 @@ def get_data_from_query(municipality_code, type_):
         query = """
             SELECT
                 value_ AS y,
-                year_ || "-" || month_ AS x
+                month_ || '/ ' || year_ AS x
             FROM unemployed
             WHERE
                 municipality_id = ? AND

@@ -53,8 +53,8 @@ const customCss = `
     .location-button {
         background-color: white;
         border: 1px solid white;
-        padding-top: 4px;
-        padding-bottom: 4px;
+        padding-top: 6px;
+        padding-bottom: 6px;
         border-radius: 8px;
     }
     .pie-column {
@@ -232,7 +232,7 @@ class FormPartOne extends React.Component {
             let place = this.state.selectedLocality;
             return (
                 <div style={{marginBottom: '3em'}}>
-                    <Header as='h4'>Přehled ppro vybrané místo:</Header>
+                    <Header as='h4'>Přehled pro vybrané místo:</Header>
                     <span
                         style={{fontSize: '1.5em'}}
                     >
@@ -297,7 +297,7 @@ class FormPartOne extends React.Component {
                 <div style={{position: 'absolute', top: 0, bottom: 0, left: 300, right: 0, overflow: 'scroll', paddingLeft: 20}}>
                     <HeaderComp />
                     <style>{customCss}</style>
-                    <form action="" onSubmit={this.handleSubmit}>
+                    <form action="" onSubmit={this.handleSubmit} style={{marginBottom: '2em'}}>
                         <Input icon='search' placeholder='Název ulice' value={this.state.street} onChange={this.handleChange}  />
 
                         <Button onClick={this.sendForm} style={{marginLeft: '1em'}} primary>Hledat</Button>

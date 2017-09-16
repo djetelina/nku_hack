@@ -8,7 +8,7 @@ const containerStyle = {
 
 const HeaderComp = () => (
     <div style={containerStyle}>
-        <Header as='h3'>Informace o místě</Header>
+        <Header as='h2'>Informace o místě</Header>
     </div>
 );
 
