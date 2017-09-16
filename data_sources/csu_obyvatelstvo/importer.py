@@ -1,74 +1,55 @@
 # -*- coding: utf-8 -*-
 
 import csv
-from util import db
+import gzip
 
 YEAR = '2011'
 SOURCE_FILE = 'data_sources/csu_obyvatelstvo/SLDB_OBYVATELSTVO.CSV'
+DUMP_NAME = 'csu_population'
+DESTINATION_FILE = 'dump/population.sql.gz'
 
 
-def save_to_db(table_name, data, metrics):
+def save_to_dump(table_name, data, metrics):
     """
-    Ulozi data do mezidatabaze, ze ktere si pak vytvorim dump a ten ulozim do repozitare.
+    Ulozi data do dumpu.
     """
     print('Ukládám do DB.')
-    with db.common_db() as connection:
-        cursor = connection.cursor()
+    gzf = gzip.GzipFile(DESTINATION_FILE, "w", compresslevel=9)
 
-        # Kraj
-        cursor.execute('''DROP TABLE IF EXISTS {}_kraj'''.format(table_name))
-        cursor.execute('''
-          CREATE TABLE {}_kraj (region_id INT, metric_id INT, metric TEXT, year INT DEFAULT 2011, value REAL)
-        '''.format(table_name))
+    gzf.write(bytes('PRAGMA foreign_keys = OFF;\n', 'utf-8'))
+    gzf.write(bytes('BEGIN TRANSACTION;\n', 'utf-8'))
 
-        query_values = []
-        for region_id, values in data['kraj'].items():
-            for index, item in enumerate(values['data']):
-                metric = metrics[index]
-                query_values.append((region_id, metric[0], metric[2], item))
-        cursor.executemany(
-            '''INSERT INTO {}_kraj (region_id, metric_id, metric, value) VALUES (?, ?, ?, ?)'''.format(table_name),
-            query_values
-        )
+    # Kraj
+    gzf.write(bytes('''CREATE TABLE {}_kraj (region_id INT, metric_id INT, metric TEXT, year INT DEFAULT 2011, value REAL);\n'''.format(table_name), 'utf-8'))
 
-        # Okres
-        cursor.execute('''DROP TABLE IF EXISTS {}_okres'''.format(table_name))
-        cursor.execute('''
-              CREATE TABLE {}_okres (region_id INT, district_id INT, metric_id TEXT, metric TEXT, year INT DEFAULT 2011, value REAL)
-            '''.format(table_name))
+    for region_id, values in data['kraj'].items():
+        for index, item in enumerate(values['data']):
+            metric = metrics[index]
+            gzf.write(bytes('''INSERT INTO {}_kraj (region_id, metric_id, metric, value) VALUES ('{}', '{}', '{}', '{}');\n'''.format(
+                table_name, region_id, metric[0], metric[2], item
+            ), 'utf-8'))
 
-        query_values = []
-        for district_id, values in data['okres'].items():
-            for index, item in enumerate(values['data']):
-                metric = metrics[index]
-                query_values.append((values['kraj'], district_id, metric[0], metric[2], item))
-        cursor.executemany(
-            '''INSERT INTO {}_okres (region_id, district_id, metric_id, metric, value) VALUES (?, ?, ?, ?, ?)'''.format(table_name),
-            query_values
-        )
+    # Okres
+    gzf.write(bytes('''CREATE TABLE {}_okres (region_id INT, district_id INT, metric_id TEXT, metric TEXT, year INT DEFAULT 2011, value REAL);\n'''.format(table_name), 'utf-8'))
 
-        # Obec
-        cursor.execute('''DROP TABLE IF EXISTS {}_obec'''.format(table_name))
-        cursor.execute('''
-              CREATE TABLE {}_obec (region_id INT, district_id INT, city_id INT, metric_id TEXT, metric TEXT, year INT DEFAULT 2011, value REAL)
-            '''.format(table_name))
+    for district_id, values in data['okres'].items():
+        for index, item in enumerate(values['data']):
+            metric = metrics[index]
+            gzf.write(bytes('''INSERT INTO {}_okres (region_id, district_id, metric_id, metric, value) VALUES ('{}', '{}', '{}', '{}', '{}');\n'''.format(
+                table_name, values['kraj'], district_id, metric[0], metric[2], item
+            ), 'utf-8'))
 
-        query_values = []
-        for city_id, values in data['obec'].items():
-            for index, item in enumerate(values['data']):
-                metric = metrics[index]
-                query_values.append((values['kraj'], values['okres'], city_id, metric[0], metric[2], item))
-        cursor.executemany(
-            '''INSERT INTO {}_obec (region_id, district_id, city_id, metric_id, metric, value) VALUES (?, ?, ?, ?, ?, ?)'''.format(table_name),
-            query_values
-        )
+    # Obec
+    gzf.write(bytes('''CREATE TABLE {}_obec (region_id INT, district_id INT, city_id INT, metric_id TEXT, metric TEXT, year INT DEFAULT 2011, value REAL);\n'''.format(table_name), 'utf-8'))
 
-        connection.commit()
+    for city_id, values in data['obec'].items():
+        for index, item in enumerate(values['data']):
+            metric = metrics[index]
+            gzf.write(bytes('''INSERT INTO {}_obec (region_id, district_id, city_id, metric_id, metric, value) VALUES ('{}', '{}', '{}', '{}', '{}', '{}');\n'''.format(
+                table_name, values['kraj'], values['okres'], city_id, metric[0], metric[2], item
+            ), 'utf-8'))
 
-    # Vycistim data. Nelze delat v ramci transakce.
-    with db.common_db() as connection:
-        cursor = connection.cursor()
-        cursor.execute("VACUUM")
+    gzf.write(bytes('COMMIT;\n', 'utf-8'))
 
 
 def load_list_location():
@@ -214,7 +195,7 @@ def nationality(list_locations):
         ]
 
         data = create_data(reader, metrics, list_locations)
-        save_to_db('nationality', data, metrics)
+        save_to_dump('nationality', data, metrics)
 
 
 def marital_status(list_locations):
@@ -232,7 +213,7 @@ def marital_status(list_locations):
         ]
 
         data = create_data(reader, metrics, list_locations)
-        save_to_db('marital_status', data, metrics)
+        save_to_dump('marital_status', data, metrics)
 
 
 def education(list_locations):
@@ -252,7 +233,7 @@ def education(list_locations):
         ]
 
         data = create_data(reader, metrics, list_locations)
-        save_to_db('education', data, metrics)
+        save_to_dump('education', data, metrics)
 
 
 def main():
