@@ -37,7 +37,7 @@ class AgeGroup:
             elif row['age_start'] == 95:
                 entry = {'x': f"{int(row['age_start'])}+", 'y': int(row['count'])}
             else:
-                entry = {'x': f"{int(row['age_start'])}-{int(row['age_start'])+5}", 'y': int(row['count'])}
+                entry = {'x': f"{int(row['age_start'])}-{int(row['age_start'])+4}", 'y': int(row['count'])}
             self.return_data['data'].append(entry)
 
 
