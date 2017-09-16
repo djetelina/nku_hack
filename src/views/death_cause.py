@@ -18,16 +18,16 @@ def get_death_causes():
 
     with db.common_db(cursor=True) as cursor:
         query = """
-        select 
-          dc.year as year, 
-          dc.cause_id as cause_id,
-          sum(dc.value) as val,
-          d.name as disease_name
-        FROM death_cause dc, disease d
-        where district_id=? and dc.value > 0 and d.code=dc.cause_id 
-        GROUP BY dc.year, dc.cause_id, d.name 
-        ORDER BY dc.value DESC 
-        LIMIT 5
+            select 
+              dc.year as year, 
+              dc.cause_id as cause_id,
+              sum(dc.value) as val,
+              d.name as disease_name
+            FROM death_cause dc, disease d
+            where district_id=? and dc.value > 0 and d.code=dc.cause_id 
+            GROUP BY dc.year, dc.cause_id, d.name 
+            ORDER BY val DESC 
+            LIMIT 5
         """
         cursor.execute(query, (district_code,))
         data = [{'x': item['disease_name'],

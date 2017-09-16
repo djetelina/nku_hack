@@ -76,6 +76,7 @@ class FormPartOne extends React.Component {
     }
 
     handleGetAddressData(place) {
+        this.setState({firstPart: {results: [place]}})
         // Vekova sada
         fetch(`${constants.serverUri}/api/age-groups`, getInitForFetch(place))
                 .then(middleFetch)
@@ -120,7 +121,7 @@ class FormPartOne extends React.Component {
                                 onClick={this.handleGetAddressData.bind(this, place)}
                                 style={buttonStyle}
                         >
-                            {place['district_name']}, {place['region_name']}
+                            {place['municipality_name']}, {place['district_name']}, {place['region_name']}
                         </button>
                     </List.Content>
                 </List.Item>

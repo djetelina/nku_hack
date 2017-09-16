@@ -46,7 +46,7 @@ def get_by_street(c, query):
           SELECT 
             u.nazev as street_name, 
             u.kod as street_id,
-            ob.nazev as mueunicipality_name,
+            ob.nazev as municipality_name,
             ob.kod as municipality_code,
             ok.nazev as district_name,
             ok.kod as district_code,
