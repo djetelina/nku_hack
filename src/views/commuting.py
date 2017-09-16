@@ -10,24 +10,32 @@ import json
 class Commuting:
     def __init__(self, district):
         self.district = district
+        self._incoming = None
+        self._outgoing = None
+        incoming_percent = (self.incoming / (self.incoming + self.outgoing))*100
+        outgoing_percent = (self.outgoing / (self.incoming + self.outgoing))*100
         self.return_data = {
             'title': 'Dojíždění za prací', 'data': [
-                {'key': 'Přijíždějících', 'value': self.incoming},
-                {'key': 'Odjíždějících', 'value': self.outgoing}
+                {'key': f'Přijíždějících: {incoming_percent}', 'value': self.incoming},
+                {'key': f'Odjíždějících: {outgoing_percent}', 'value': self.outgoing}
             ]
         }
 
     @property
     def incoming(self):
-        with db(cursor=True) as cur:
-            cur.execute('SELECT count FROM commuting WHERE `to` = ?', (self.district,))
-            return cur.fetchone()['count']
+        if not self._incoming:
+            with db(cursor=True) as cur:
+                cur.execute('SELECT count FROM commuting WHERE `to` = ?', (self.district,))
+                self._incoming = cur.fetchone()['count']
+        return self._incoming
 
     @property
     def outgoing(self):
-        with db(cursor=True) as cur:
-            cur.execute('SELECT count FROM commuting WHERE `from` = ?', (self.district,))
-            return cur.fetchone()['count']
+        if not self._outgoing:
+            with db(cursor=True) as cur:
+                cur.execute('SELECT count FROM commuting WHERE `from` = ?', (self.district,))
+                self._outgoing = cur.fetchone()['count']
+        return self._outgoing
 
 
 @speaks_json

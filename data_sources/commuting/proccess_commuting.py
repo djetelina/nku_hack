@@ -17,12 +17,18 @@ for index, uzemi in wanted_columns['uzemiz_kod'].iteritems():
     try:
         wanted_columns.set_value(index, 'uzemiz_kod', CSU_101_TO_RUIAN[uzemi])
     except KeyError:
-        wanted_columns.drop(index, inplace=True)
+        if uzemi == 3018:
+            wanted_columns.set_value(index, 'uzemiz_kod', 3100)  # Praha musi byt vzdy specialni
+        else:
+            wanted_columns.drop(index, inplace=True)
 for index, uzemi in wanted_columns['uzemido_kod'].iteritems():
     try:
         wanted_columns.set_value(index, 'uzemido_kod', CSU_101_TO_RUIAN[uzemi])
     except KeyError:
-        wanted_columns.drop(index, inplace=True)
+        if uzemi == 3018:
+            wanted_columns.set_value(index, 'uzemido_kod', 3100)  # Praha musi byt vzdy specialni
+        else:
+            wanted_columns.drop(index, inplace=True)
 
 wanted_columns.rename(columns={'hodnota': 'count', 'uzemiz_kod': 'from', 'uzemido_kod': 'to'}, inplace=True)
 wanted_columns.to_sql('commuting', intermediate_db, if_exists='replace')
