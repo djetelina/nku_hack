@@ -20,15 +20,15 @@ def prepare_data(request_args, data_type):
 
         # Obec
         if municipality_code:
-            data = cursor.execute('''SELECT metric, value FROM {}_obec WHERE region_id=? AND district_id=? AND city_id=?'''.format(
+            data = cursor.execute('''SELECT metric, value FROM {}_obec WHERE city_id=?'''.format(
                 data_type
-            ), (region_code, district_code, municipality_code))
+            ), (municipality_code,))
 
         # Okres
         elif district_code:
-            data = cursor.execute('''SELECT metric, value FROM {}_okres WHERE region_id=? AND district_id=?'''.format(
+            data = cursor.execute('''SELECT metric, value FROM {}_okres WHERE district_id=?'''.format(
                 data_type
-            ), (region_code, district_code))
+            ), (district_code,))
 
         # Kraj
         elif region_code:
