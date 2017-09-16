@@ -237,6 +237,7 @@ class FormPartOne extends React.Component {
                         style={{fontSize: '1.5em'}}
                     >
                         {place['region_name']}&nbsp;&rarr;&nbsp;{place['district_name']}&nbsp;&rarr;&nbsp;{place['municipality_name']}
+                        {(place.street_name) ? <span>&nbsp;&rarr;&nbsp;{place.street_name}</span> : ""}
                     </span>
 
                 </div>
