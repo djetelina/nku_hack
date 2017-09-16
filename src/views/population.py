@@ -2,6 +2,7 @@
 from views.decorators import speaks_json, allowed_post_only
 from flask import request
 from util import db
+import json
 
 
 def prepare_data(request_args, data_type):
@@ -12,28 +13,28 @@ def prepare_data(request_args, data_type):
     municipality_code = request_args.get('municipality_code')
     district_code = request_args.get('district_code')
     region_code = request_args.get('region_id')
-
+    print(region_code, district_code, municipality_code)
     response_data = []
     with db.common_db() as connection:
         cursor = connection.cursor()
 
         # Obec
         if municipality_code:
-            data = cursor.execute('''
-                    SELECT metric, value FROM {}_obec WHERE region_id=?, district_id=?, city_id=?
-                '''.format(data_type), (region_code, district_code, municipality_code))
+            data = cursor.execute('''SELECT metric, value FROM {}_obec WHERE region_id=? AND district_id=? AND city_id=?'''.format(
+                data_type
+            ), (region_code, district_code, municipality_code))
 
         # Okres
         elif district_code:
-            data = cursor.execute('''
-                    SELECT metric, value FROM {}_okres WHERE region_id=?, district_id=?
-                '''.format(data_type), (region_code, district_code))
+            data = cursor.execute('''SELECT metric, value FROM {}_okres WHERE region_id=? AND district_id=?'''.format(
+                data_type
+            ), (region_code, district_code))
 
         # Kraj
         elif region_code:
-            data = cursor.execute('''
-                    SELECT metric, value FROM {}_kraj WHERE region_id=?
-                '''.format(data_type), (region_code,))
+            data = cursor.execute('''SELECT metric, value FROM {}_kraj WHERE region_id=?'''.format(
+                data_type
+            ), (region_code,))
         else:
             data = []
 
@@ -55,7 +56,8 @@ def education():
     Vrati data pro vzdelani.
     """
     print(request.data)
-    response_data = prepare_data(request.form, 'education')
+    response_data = prepare_data(json.loads(request.data), 'education')
+    print(response_data)
 
     return dict(result=True if response_data else False, data=response_data)
 
@@ -67,7 +69,7 @@ def marital_status():
     """
     Vrati data pro rodinny stav.
     """
-    response_data = prepare_data(request.json, 'marital_status')
+    response_data = prepare_data(json.loads(request.data), 'marital_status')
 
     return dict(result=True if response_data else False, data=response_data)
 
@@ -79,6 +81,6 @@ def nationality():
     """
     Vrati data pro narodnost.
     """
-    response_data = prepare_data(request.json, 'nationality')
+    response_data = prepare_data(json.loads(request.data), 'nationality')
 
     return dict(result=True if response_data else False, data=response_data)

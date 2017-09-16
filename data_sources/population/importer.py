@@ -2,11 +2,64 @@
 
 import csv
 import gzip
+from util import db
+import re
 
 YEAR = '2011'
-SOURCE_FILE = 'data_sources/csu_obyvatelstvo/SLDB_OBYVATELSTVO.CSV'
+SOURCE_FILE = 'data_sources/population/SLDB_OBYVATELSTVO.CSV'
 DUMP_NAME = 'csu_population'
 DESTINATION_FILE = 'dump/population.sql.gz'
+
+# Aby jsem mohl naparovat data, musim provest i rucni upravy.
+FIXES = {
+    'obec': {'dolany': 'dolany nad vltavou'}
+}
+
+
+def load_ruian():
+    """
+    Nacte data z RUIAN pro potreby doplneni dat.
+
+    Vraci data ve formatu:
+
+        {
+            'kraj': {
+                <kraj_nazev>: <kod>
+            },
+            'okres': {
+                <okres_nazev>,<kraj_nazev>: [<okres_kod>, <kraj_kod>]
+            },
+            'obec': {
+                <obec_nazev>,<okres_nazev>,<kraj_nazev>: [<obec_kod>, <okres_kod>, <kraj_kod>]
+            }
+        }
+    """
+    with db.ruian_db() as connection:
+        cursor = connection.cursor()
+
+        data = cursor.execute('''
+SELECT
+  obce.kod, obce.nazev, okresy.kod, okresy.nazev, vusc.kod, vusc.nazev
+FROM
+  obce
+JOIN
+  okresy ON okresy.kod=obce.okres_kod
+JOIN
+  vusc ON vusc.kod=okresy.vusc_kod;
+''')
+
+        ruian_data = {
+            'kraj': {},
+            'okres': {},
+            'obec': {}
+        }
+
+        for item in data:
+            ruian_data['kraj'][item[5].lower()] = item[4]
+            ruian_data['okres']['{},{}'.format(item[3], item[5]).lower()] = [item[2], item[4]]
+            ruian_data['obec']['{},{},{}'.format(item[1], item[3], item[5]).lower()] = [item[0], item[2], item[4]]
+
+    return ruian_data
 
 
 def save_to_dump(table_name, data, metrics):
@@ -71,7 +124,7 @@ def load_list_location():
     }
     """
     print('Načítám seznamy území.')
-    with open('data_sources/csu_obyvatelstvo/seznam_uzemi.CSV', 'r', encoding='cp1250') as f:
+    with open('data_sources/population/seznam_uzemi.CSV', 'r', encoding='cp1250') as f:
         reader = csv.reader(f, delimiter=',', quotechar='\"')
 
         header = next(reader)
@@ -107,7 +160,7 @@ def load_list_location():
                     'okres': item[7]
                 }
 
-    with open('data_sources/csu_obyvatelstvo/seznam_uzemi.CSV', 'r', encoding='cp1250') as f:
+    with open('data_sources/population/seznam_uzemi.CSV', 'r', encoding='cp1250') as f:
         reader = csv.reader(f, delimiter=',', quotechar='\"')
 
         header = next(reader)
@@ -122,22 +175,33 @@ def load_list_location():
             if item[1] == '100':
                 # kraje
                 region = data_connection['kraj'][item[0]]
-                data['kraj'][region['id']] = region['nazev']
+                data['kraj'][region['id']] = region['nazev'].lower()
             elif item[1] == '101':
                 # okresy
                 district = data_connection['okres'][item[0]]
                 region = data_connection['kraj'][district['kraj']]
-                data['okres'][district['id']] = [region['id'], district['nazev']]
+                data['okres'][district['id']] = [region['id'], region['nazev'].lower(), district['nazev'].lower()]
             elif item[1] == '43':
                 # obce
                 city = data_connection['obec'][item[0]]
                 district = data_connection['okres'][city['okres']]
                 region = data_connection['kraj'][district['kraj']]
-                data['obec'][city['id']] = [region['id'], district['id'], city['nazev']]
+                if '(dříve okres' in city['nazev']:
+                    # Chci odstranit text (drive okres ...)
+                    city['nazev'] = re.sub(r'\s+\(.+\)$', '', city['nazev'], flags=re.DOTALL)
+                data['obec'][city['id']] = [region['id'], district['id'], region['nazev'].lower(), district['nazev'].lower(), city['nazev'].lower()]
         return data
 
 
-def create_data(reader, metrics, list_locations):
+def create_data(reader, metrics, list_locations, ruian_data):
+    """
+    Vytvori data pro ulozeni do dumpu. IDcka lokalit se zde upravuji z CSU na RUIAN aby jsme v datech mohli hledat.
+    :param reader:
+    :param metrics:
+    :param list_locations:
+    :param ruian_data:
+    :return:
+    """
     print('vytvářím data pro uložení do DB.')
     data = {
         'kraj': {},
@@ -151,30 +215,40 @@ def create_data(reader, metrics, list_locations):
             # Ziskame si ze radku vsechna uzitecna data
             line_data = [int(float(line[index])) for _ignore1, index, _ignore2 in metrics]
             if line[2] == '100':
-                # kraje
-                data['kraj'][line[3]] = {
+                # Kraj
+                kraj_id = ruian_data['kraj'][list_locations['kraj'][line[3]].lower()]
+                data['kraj'][kraj_id] = {
                     'data': line_data
                 }
             elif line[2] == '101':
-                # okresy
+                # Okres
                 location = list_locations['okres'][line[3]]
-                data['okres'][line[3]] = {
-                    'kraj': location[0],
+                okres_id, kraj_id = ruian_data['okres']['{},{}'.format(location[2], location[1]).lower()]
+                data['okres'][okres_id] = {
+                    'kraj': kraj_id,
                     'data': line_data
                 }
             elif line[2] == '43':
                 # obce
                 location = list_locations['obec'][line[3]]
-                data['obec'][line[3]] = {
-                    'kraj': location[0],
-                    'okres': location[1],
+                try:
+                    obec_id, okres_id, kraj_id = ruian_data['obec']['{},{},{}'.format(location[4], location[3], location[2]).lower()]
+                except KeyError:
+                    try:
+                        obec_id, okres_id, kraj_id = ruian_data['obec']['{},{},{}'.format(FIXES['obec'][location[4]], location[3], location[2]).lower()]
+                    except KeyError:
+                        print('Nenalezeno: {}'.format('{},{},{}'.format(location[4], location[3], location[2]).lower()))
+                        continue
+                data['obec'][obec_id] = {
+                    'kraj': kraj_id,
+                    'okres': okres_id,
                     'data': line_data
                 }
 
     return data
 
 
-def nationality(list_locations):
+def nationality(list_locations, ruian_data):
     print('Zpracovávám národnost.')
     with open(SOURCE_FILE, 'r', encoding='cp1250') as f:
         reader = csv.reader(f, delimiter=',', quotechar='\"')
@@ -194,11 +268,11 @@ def nationality(list_locations):
             ('unknown', header.index('vse41111'), 'Neuvedená'),
         ]
 
-        data = create_data(reader, metrics, list_locations)
+        data = create_data(reader, metrics, list_locations, ruian_data)
         save_to_dump('nationality', data, metrics)
 
 
-def marital_status(list_locations):
+def marital_status(list_locations, ruian_data):
     print('Zpracovávám rodinný stav')
     with open(SOURCE_FILE, 'r', encoding='cp1250') as f:
         reader = csv.reader(f, delimiter=',', quotechar='\"')
@@ -212,11 +286,11 @@ def marital_status(list_locations):
             ('widowed', header.index('vse4121'), 'Ovdovělí'),
         ]
 
-        data = create_data(reader, metrics, list_locations)
+        data = create_data(reader, metrics, list_locations, ruian_data)
         save_to_dump('marital_status', data, metrics)
 
 
-def education(list_locations):
+def education(list_locations, ruian_data):
     print('Zpracovávám vzdělání')
     with open(SOURCE_FILE, 'r', encoding='cp1250') as f:
         reader = csv.reader(f, delimiter=',', quotechar='\"')
@@ -232,15 +306,16 @@ def education(list_locations):
             ('university', header.index('vse2181'), 'Vysokoškolské'),
         ]
 
-        data = create_data(reader, metrics, list_locations)
+        data = create_data(reader, metrics, list_locations, ruian_data)
         save_to_dump('education', data, metrics)
 
 
 def main():
     locations_list = load_list_location()
-    nationality(locations_list)
-    marital_status(locations_list)
-    education(locations_list)
+    ruian_data = load_ruian()
+    nationality(locations_list, ruian_data)
+    marital_status(locations_list, ruian_data)
+    education(locations_list, ruian_data)
 
 
 if __name__ == '__main__':

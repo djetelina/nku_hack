@@ -5,8 +5,8 @@ from flask import Blueprint
 from .suggest_locality import suggest_locality
 from views.age_groups import age_groups_all
 from .unemployed import unemployed
-from .csu_population import education, marital_status, nationality
 from .death_cause import get_death_causes
+from .population import education, marital_status, nationality
 
 bp_api = Blueprint('api', __name__, url_prefix='/api/')
 
