@@ -38,7 +38,7 @@ const DATA_FETCH = [
     },
     {
         uri: '/api/to_survive',
-        prop: 'to_survive',
+        prop: 'toSurvive',
     },
 ];
 
