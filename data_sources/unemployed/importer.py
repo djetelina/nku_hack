@@ -55,7 +55,7 @@ def parse(path):
                     row[5],  # year_
                     row[6],  # month_
                     row[2],  # type_
-                    row[1],  # value_
+                    row[1].replace(",", "."),  # value_
                 ))
                 if i > 10000:
                     cur.executemany(query_prefix, values)

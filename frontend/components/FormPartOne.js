@@ -85,7 +85,7 @@ class FormPartOne extends React.Component {
         fetch(`${constants.serverUri}/api/unemployed?municipality_code=500011`)
                 .then(middleFetch)
                 .then((data) => {
-                    this.setState({ unemployed: data.data });
+                    this.setState({ unemployed: data.data.data });
                     console.log(data);
                 })
                 .catch(error);

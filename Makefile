@@ -15,10 +15,11 @@ else
 endif
 
 run:
+	cd frontend && npm run dev &
 	cd src && python nku_hack.py
-	cd frontend && npm i
 
 import:
+	rm -f db/db.sqlite
 	PYTHONPATH=src:. python data_sources/importer.py
 
 db-dump:
