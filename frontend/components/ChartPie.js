@@ -12,10 +12,12 @@ class ChartPie extends React.Component {
             return (
                 <div>
                     <Header as='h4'>{this.props.data.title}</Header>
-                    <PieChart
-                        size={300}
-                        data={this.props.data.data}
-                    />
+                    <div style={{marginBottom: '1.5em'}}>
+                        <PieChart
+                            size={250}
+                            data={this.props.data.data}
+                        />
+                    </div>
                     <Legend data={this.props.data.data} dataId={'key'} />
                 </div>
             );

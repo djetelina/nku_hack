@@ -29,6 +29,7 @@ class Counter extends React.Component {
     render () {
         return (
             <Layout>
+
                 <FormPartOne />
             </Layout>
         )

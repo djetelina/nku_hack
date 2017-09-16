@@ -1,10 +1,10 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import { Icon, Input, Button, List, Header } from 'semantic-ui-react';
+import { Icon, Input, Button, List, Header, Grid } from 'semantic-ui-react';
 
 import constants from '../Constants';
 import ChartBar from './ChartBar';
 import ChartPie from './ChartPie';
+import HeaderComp from './Header';
 
 const DATA_FETCH = [
     {
@@ -53,7 +53,12 @@ const customCss = `
         border-radius: 8px;
     }
     .pie-column {
-        margin-right: 1em;
+        margin-right: 1.6em;
+    }
+    
+    hr {
+        margin-bottom: 2em;
+        margin-top: 2em;
     }
 `;
 
@@ -195,7 +200,6 @@ class FormPartOne extends React.Component {
         if (this.state.firstPart) {
             return this.state.firstPart.results.map((place, i) =>
                 <List.Item key={i}>
-                    <List.Icon name='marker' />
                     <List.Content>
                         <button
                             className="location-button"
@@ -237,9 +241,13 @@ class FormPartOne extends React.Component {
 
         return (
             <div>
+                <hr />
                 <ChartBar data={this.state.unemployed} />
+                <hr />
                 <ChartBar data={this.state.ageGroups} />
+                <hr />
                 <ChartBar data={this.state.deathCauses} legend={true} legendAsHref={true} />
+                <hr />
                 <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                     <div className="pie-column">
                         <ChartPie data={this.state.education} />
@@ -251,6 +259,7 @@ class FormPartOne extends React.Component {
                         <ChartPie data={this.state.marital} />
                     </div>
                 </div>
+                <hr />
                 <ChartPie data={this.state.commuting} />
                 {this.state.to_survive &&
                 <div style={{position: "relative", width: "50%"}}>
@@ -279,23 +288,27 @@ class FormPartOne extends React.Component {
     render () {
         return (
             <div>
-
                 <script src="https://api.mapy.cz/loader.js"></script>
                 <script type="text/javascript">Loader.load()</script>
 
-                <style>{customCss}</style>
-                <form action="" onSubmit={this.handleSubmit}>
-                    <Input icon='search' placeholder='Název ulice' value={this.state.street} onChange={this.handleChange}  />
+                <div style={{position: 'absolute', top: 0, bottom: 0, left: 0}}>
 
-                    <Button onClick={this.sendForm} style={{marginLeft: '1em'}} primary>Hledat</Button>
-                    <Button onClick={this.handleReset} secondary>Zrušit</Button>
-                </form>
-                <List>{this.renderStreets()}</List>
+                    <div id="m" ref={(c) => {this._map_div = c;}} style={{height: '100%', width: 300}}></div>
+                </div>
+                <div style={{position: 'absolute', top: 0, bottom: 0, left: 300, right: 0, overflow: 'scroll', paddingLeft: 20}}>
+                    <HeaderComp />
+                    <style>{customCss}</style>
+                    <form action="" onSubmit={this.handleSubmit}>
+                        <Input icon='search' placeholder='Název ulice' value={this.state.street} onChange={this.handleChange}  />
 
-                {this.renderSelectedLocality()}
-                <div id="m" ref={(c) => {this._map_div = c;}} style={{height:200, widht:'100%', marginTop: 10, marginBottom: 10}}></div>
-                {this.renderCharts()}
+                        <Button onClick={this.sendForm} style={{marginLeft: '1em'}} primary>Hledat</Button>
+                        <Button onClick={this.handleReset} secondary>Zrušit</Button>
+                    </form>
+                    <List>{this.renderStreets()}</List>
 
+                    {this.renderSelectedLocality()}
+                    {this.renderCharts()}
+                </div>
             </div>
         )
     }
