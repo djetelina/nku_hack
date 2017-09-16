@@ -48,7 +48,7 @@ def prepare_data(request_args, data_type):
                 'value': item[1],
             })
 
-    return response_data
+    return sorted(response_data, key=lambda x: x['value'], reverse=True)
 
 
 @speaks_json
