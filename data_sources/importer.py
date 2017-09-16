@@ -2,6 +2,7 @@
 
 from population import importer as population_importer
 from unemployed import importer as unemployed_importer
+from elections import importer as election_importer
 
 
 def main():
@@ -11,6 +12,7 @@ def main():
     """
     population_importer.main()
     unemployed_importer.run()
+    election_importer.main()
 
 
 if __name__ == "__main__":
