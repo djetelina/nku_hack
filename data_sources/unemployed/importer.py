@@ -10,9 +10,9 @@ DATA_DIR = os.path.dirname(os.path.realpath(__file__)) + "/data/"
 def run():
     with db.common_db() as con:
         cur = con.cursor()
-        vacuum = "DROP TABLE unemployed"
+        drop_table = "DROP TABLE unemployed"
         try:
-            cur.execute(vacuum)
+            cur.execute(drop_table)
         except:
             pass
 
@@ -41,7 +41,7 @@ def run():
 def parse(path):
     with db.common_db() as con:
         cur = con.cursor()
-        query_prefix = "INSERT INTO unemployed VALUES (?, ?, ?, ?, ?)"
+        insert_query = "INSERT INTO unemployed VALUES (?, ?, ?, ?, ?)"
 
         values = []
         i = 0
@@ -58,10 +58,10 @@ def parse(path):
                     row[1].replace(",", "."),  # value_
                 ))
                 if i > 10000:
-                    cur.executemany(query_prefix, values)
+                    cur.executemany(insert_query, values)
                     con.commit()
                     i = 0
                     values = []
 
-            cur.executemany(query_prefix, values)
+            cur.executemany(insert_query, values)
             con.commit()
