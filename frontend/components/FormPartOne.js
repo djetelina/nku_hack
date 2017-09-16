@@ -53,6 +53,7 @@ class FormPartOne extends React.Component {
             firstPart: null,
             unemployed: null,
             ageGroups: null,
+            deathCauses: null,
         });
     }
 
@@ -89,6 +90,14 @@ class FormPartOne extends React.Component {
         //             console.log(data);
         //         })
         //         .catch(error);
+
+        fetch(`${constants.serverUri}/api/death-causes`, getInitForFetch(place))
+            .then(middleFetch)
+            .then((data) => {
+            this.setState({ deathCauses: data.data.data });
+            console.log(data);
+        })
+        .catch(error);
     }
 
     renderStreets() {
