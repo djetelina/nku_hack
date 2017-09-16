@@ -2,6 +2,7 @@
 from views.decorators import speaks_json, allowed_post_only
 from flask import request
 from util import db
+import json
 
 
 @speaks_json
@@ -11,7 +12,7 @@ def suggest_locality():
     """
     Vyhleda lokalitu podle zadaneho retezce
     """
-    query = request.args.get("query")
+    query = json.loads(request.data).get("query")
     if len(query) < 3:
         return dict(result=False, message=u"Příliš krátké zadání")
 

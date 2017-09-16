@@ -18,6 +18,18 @@ function error (e) {
     console.log(e);
 }
 
+function getInitForFetch(data) {
+    return {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json, text/plain, */*',
+            'Content-Type': 'text/plain',
+        },
+        body: JSON.stringify(data),
+        mode: 'cors',
+    };
+}
+
 class FormPartOne extends React.Component {
 
     constructor(props) {
@@ -50,7 +62,8 @@ class FormPartOne extends React.Component {
 
     handleSubmit(event) {
         event.preventDefault();
-        fetch(`${constants.serverUri}/api/suggest-locality?query=${this.state.street.trim()}`)
+        const data = { query: this.state.street.trim()};
+        fetch(`${constants.serverUri}/api/suggest-locality`, getInitForFetch(data))
         .then(middleFetch)
         .then(data => {
             this.setState({ firstPart: data.data });
@@ -60,17 +73,7 @@ class FormPartOne extends React.Component {
     }
 
     handleGetAddressData(place) {
-        const data = {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json, text/plain, */*',
-                'Content-Type': 'text/plain',
-            },
-            body: JSON.stringify(place),
-            mode: 'cors',
-        };
-        console.log(data);
-        fetch(`${constants.serverUri}/api/age-groups`, data)
+        fetch(`${constants.serverUri}/api/age-groups`, getInitForFetch(place))
                 .then(middleFetch)
                 .then((data) => {
                     this.setState({ ageGroups: data.data });
