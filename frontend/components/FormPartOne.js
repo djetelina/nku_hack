@@ -23,7 +23,7 @@ class FormPartOne extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            street: 'horymírova',
+            street: 'vlašimská',
             firstPart: null,
             unemployed: null,
             ageGroups: null,
@@ -36,7 +36,12 @@ class FormPartOne extends React.Component {
     }
 
     handleReset(event) {
-        this.setState({street: '', firstPart: null, unemployed: ''});
+        this.setState({
+            street: '',
+            firstPart: null,
+            unemployed: '',
+            ageGroups: null,
+        });
     }
 
     handleChange(event) {
@@ -63,12 +68,12 @@ class FormPartOne extends React.Component {
             },
             body: JSON.stringify(place),
             mode: 'cors',
-            credentials: 'include',
         };
         console.log(data);
         fetch(`${constants.serverUri}/api/age-groups`, data)
                 .then(middleFetch)
                 .then((data) => {
+                    this.setState({ ageGroups: data.data });
                     console.log('Druhy dotaz pro data do grafu');
                     console.log(data);
                 })

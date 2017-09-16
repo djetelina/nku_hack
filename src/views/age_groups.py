@@ -32,11 +32,12 @@ class AgeGroup:
     def _format_data(self) -> None:
         for row in self._db_data:
             if row['age_start'] is None:
-                entry = {'label': 'Celkem', 'value': int(row['count'])}
+                continue
+            #    entry = {'x': 'Celkem', 'y': int(row['count'])}
             elif row['age_start'] == 95:
-                entry = {'label': f"{int(row['age_start'])}+", 'value': int(row['count'])}
+                entry = {'x': f"{int(row['age_start'])}+", 'y': int(row['count'])}
             else:
-                entry = {'label': f"{int(row['age_start'])}-{int(row['age_start'])+5}", 'value': int(row['count'])}
+                entry = {'x': f"{int(row['age_start'])}-{int(row['age_start'])+5}", 'y': int(row['count'])}
             self.return_data['data'].append(entry)
 
 

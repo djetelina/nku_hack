@@ -42,15 +42,6 @@ class GraphUnemployed extends React.Component {
     }
 }
 
-GraphUnemployed.defaultProps = {
-    data: [
-      { x: 10, y: 20 },
-      { x: 12, y: 20 },
-      { x: 30, y: 30, color: '#f00' },
-      { x: 40, y: 40 }
-    ],
-};
-
 GraphUnemployed.propTypes = {
     data: React.PropTypes.array,
 };

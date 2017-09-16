@@ -15,6 +15,11 @@ class GraphAgeGroup extends React.Component {
                 <div>
                     <Header as='h4'>Věk obyvatelstva okresku</Header>
                     <BarChart
+                        axisLabels={{x: 'Věk', y: 'Počet'}}
+                        axes
+                        grid
+                        colorBars
+                        width={800}
                         data={this.props.data}
                     />
                 </div>
