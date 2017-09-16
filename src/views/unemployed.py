@@ -59,7 +59,8 @@ def get_data_from_query(municipality_code, type_):
         query = """
             SELECT
                 value_ AS y,
-                month_ || '/ ' || year_ AS x
+                month_ || '/ ' || year_ AS x,
+                '#1f77b4' as color
             FROM unemployed
             WHERE
                 municipality_id = ? AND

@@ -19,7 +19,7 @@ class Commuting:
         self.return_data = {
             'title': 'Dojíždění za prací', 'data': [
                 # key - popisek hodnoty v legende, value - hodnota
-                {'key': f'Přijíždějících: {self.incoming}%', 'value': self.incoming},
+                {'key': f'Přijíždějících: {self.incoming}', 'value': self.incoming},
                 {'key': f'Odjíždějících: {self.outgoing}', 'value': self.outgoing}
             ]
         }
