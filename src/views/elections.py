@@ -3,9 +3,10 @@ from views.decorators import speaks_json, allowed_post_only
 from flask import request
 from util import db
 import json
+from typing import Dict, Tuple, List, Any
 
 
-def prepare_data(request_args, data_type):
+def prepare_data(request_args: Dict[str, str], data_type: str) -> Tuple[List[Dict[str, Any]], str]:
     """
     Jelikoz vsechny 3 datove sady maji stejny format, lze se na ne dotazovat stejnou funkci a
     staci jen menit nazvy tabulek.
@@ -45,8 +46,7 @@ def prepare_data(request_args, data_type):
 
 @speaks_json
 @allowed_post_only
-def elections():
-    # type: () -> Dict[str, Any]
+def elections() -> Dict[str, Any]:
     """
     Vrati data pro volby do Poslanecke snemovny 2013 za obce.
     """

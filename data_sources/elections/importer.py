@@ -5,6 +5,8 @@ import gzip
 import requests
 import xml.etree.ElementTree
 
+from typing import Dict, Tuple, List, Any
+
 POLITICAL_PARTIES = {
     '1': 'Česká strana sociálně demokratická',
     '10': 'Strana soukromníků České republiky',
@@ -113,7 +115,7 @@ NUTS = {
 }
 
 
-def download_data(nuts):
+def download_data(nuts: str) -> str:
     """
     Stahne soubor obsahujici vysledky voleb do Poslanecne snemovny v danem NUTS.
 
@@ -124,7 +126,7 @@ def download_data(nuts):
     return response.content
 
 
-def process_data():
+def process_data() -> List[Tuple[int, int, str, int]]:
     """
     Stazene soubory obsahujici data k vysledkum voleb se zpracuji a vygeneruje dict s daty.
     """
@@ -159,7 +161,7 @@ def process_data():
     return response_data
 
 
-def save_to_dump(table_name, data):
+def save_to_dump(table_name: str, data: List[Tuple[int, int, str, int]]) -> None:
     """
     Ulozi data do dumpu.
     """

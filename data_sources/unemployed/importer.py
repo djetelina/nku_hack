@@ -3,6 +3,7 @@
 import os
 import csv
 from util import db
+from typing import Dict, Tuple, List, Any
 
 DATA_DIR = os.path.dirname(os.path.realpath(__file__)) + "/data/"
 
@@ -38,7 +39,7 @@ def run():
         cur.execute("VACUUM")
 
 
-def parse(path):
+def parse(path: str):
     with db.common_db() as con:
         cur = con.cursor()
         insert_query = "INSERT INTO unemployed VALUES (?, ?, ?, ?, ?)"

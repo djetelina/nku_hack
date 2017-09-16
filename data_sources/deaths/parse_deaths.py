@@ -3,6 +3,7 @@ import csv
 import os
 import pickle
 import gzip
+from typing import Dict, Tuple, List, Any
 
 from data_sources.csu101 import CSU_101_TO_RUIAN
 
@@ -27,7 +28,7 @@ TABLE_SQL = """
 """
 
 
-def read_data(path):
+def read_data(path: str) -> Tuple[List, List]:
     """
     precte data ze souboru a udela z toho list dictu.
     :param path:
@@ -53,7 +54,7 @@ def read_data(path):
     return headers, records
 
 
-def temp_or_calculate(fname, function):
+def temp_or_calculate(fname: str, function):
     """
     vrati data z picklu, nebo je spocita, kdyz nejsou
     :param fname:
@@ -68,8 +69,7 @@ def temp_or_calculate(fname, function):
         return dta
 
 
-def parse_file(path):
-    # type: (str) -> None
+def parse_file(path: str) -> None:
     """
     zpracuje soubor.
     :param path: cesta k souboru.

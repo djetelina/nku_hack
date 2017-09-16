@@ -5,6 +5,8 @@ import os
 import gzip
 from util import db
 import re
+from typing import Dict, Tuple, List, Any
+
 
 YEAR = '2011'
 SOURCE_FILE = 'data_sources/population/SLDB_OBYVATELSTVO.CSV'
@@ -16,7 +18,7 @@ FIXES = {
 }
 
 
-def load_ruian():
+def load_ruian() -> Dict[str, Dict[str, Any]]:
     """
     Nacte data z RUIAN pro potreby doplneni dat.
 
@@ -62,7 +64,7 @@ JOIN
     return ruian_data
 
 
-def save_to_dump(table_name, data, metrics):
+def save_to_dump(table_name: str, data, metrics: List[Tuple[str, int, str]]):
     """
     Ulozi data do dumpu.
     """
@@ -105,7 +107,7 @@ def save_to_dump(table_name, data, metrics):
     gzf.write(bytes('COMMIT;\n', 'utf-8'))
 
 
-def load_list_location():
+def load_list_location() -> Dict[str, Dict[str, Any]]:
     """
     Nacte obsah souboru seznam_uzemi.CSV pro pouziti.
 
@@ -193,7 +195,7 @@ def load_list_location():
         return data
 
 
-def create_data(reader, metrics, list_locations, ruian_data):
+def create_data(reader: csv.reader, metrics: List[Tuple[str, int, str]], list_locations: Dict[str, Dict[str, Any]], ruian_data: Dict[str, Dict[str, Any]]):
     """
     Vytvori data pro ulozeni do dumpu. IDcka lokalit se zde upravuji z CSU na RUIAN aby jsme v datech mohli hledat.
     :param reader:
@@ -248,7 +250,7 @@ def create_data(reader, metrics, list_locations, ruian_data):
     return data
 
 
-def nationality(list_locations, ruian_data):
+def nationality(list_locations: Dict[str, Dict[str, Any]], ruian_data: Dict[str, Dict[str, Any]]):
     print('Zpracovávám národnost.')
     with open(SOURCE_FILE, 'r', encoding='cp1250') as f:
         reader = csv.reader(f, delimiter=',', quotechar='\"')
@@ -272,7 +274,7 @@ def nationality(list_locations, ruian_data):
         save_to_dump('nationality', data, metrics)
 
 
-def marital_status(list_locations, ruian_data):
+def marital_status(list_locations: Dict[str, Dict[str, Any]], ruian_data: Dict[str, Dict[str, Any]]):
     print('Zpracovávám rodinný stav')
     with open(SOURCE_FILE, 'r', encoding='cp1250') as f:
         reader = csv.reader(f, delimiter=',', quotechar='\"')
@@ -290,7 +292,7 @@ def marital_status(list_locations, ruian_data):
         save_to_dump('marital_status', data, metrics)
 
 
-def education(list_locations, ruian_data):
+def education(list_locations: Dict[str, Dict[str, Any]], ruian_data: Dict[str, Dict[str, Any]]):
     print('Zpracovávám vzdělání')
     with open(SOURCE_FILE, 'r', encoding='cp1250') as f:
         reader = csv.reader(f, delimiter=',', quotechar='\"')
