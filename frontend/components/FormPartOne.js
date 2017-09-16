@@ -5,7 +5,10 @@ import constants from '../Constants';
 import ChartBar from './ChartBar';
 import ChartPie from './ChartPie';
 import HeaderComp from './Header';
+<<<<<<< 8ff2a6c9761ae61d3d944a586d93a19e07e23a31
 import FooterComp from './Footer';
+=======
+>>>>>>> prvni verze noveho layoutu
 
 const DATA_FETCH = [
     {
@@ -56,11 +59,14 @@ const customCss = `
     .pie-column {
         margin-right: 1.6em;
     }
-    
+
     hr {
         margin-bottom: 2em;
         margin-top: 2em;
+<<<<<<< 8ff2a6c9761ae61d3d944a586d93a19e07e23a31
         border solid 2px gray;
+=======
+>>>>>>> prvni verze noveho layoutu
     }
 `;
 
@@ -290,6 +296,9 @@ class FormPartOne extends React.Component {
     render () {
         return (
             <div>
+                <script src="https://api.mapy.cz/loader.js"></script>
+                <script type="text/javascript">Loader.load()</script>
+
                 <div style={{position: 'absolute', top: 0, bottom: 0, left: 0}}>
 
                     <div id="m" ref={(c) => {this._map_div = c;}} style={{height: '100%', width: 300}}></div>
@@ -307,8 +316,6 @@ class FormPartOne extends React.Component {
 
                     {this.renderSelectedLocality()}
                     {this.renderCharts()}
-
-                    <FooterComp />
                 </div>
             </div>
         )
