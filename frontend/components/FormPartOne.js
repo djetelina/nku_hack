@@ -53,6 +53,7 @@ class FormPartOne extends React.Component {
             education: null,
             nationality: null,
             marital: null,
+            commuting: null,
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -71,6 +72,7 @@ class FormPartOne extends React.Component {
             education: null,
             nationality: null,
             marital: null,
+            commuting: null,
         });
     }
 
@@ -140,6 +142,14 @@ class FormPartOne extends React.Component {
             console.log(data);
         })
         .catch(error);
+
+        fetch(`${constants.serverUri}/api/commuting`, getInitForFetch(place))
+            .then(middleFetch)
+            .then((data) => {
+            this.setState({ commuting: data.data });
+            console.log(data);
+        })
+        .catch(error);
     }
 
     renderStreets() {
@@ -196,10 +206,11 @@ class FormPartOne extends React.Component {
 
                 <ChartBar data={this.state.unemployed} />
                 <ChartBar data={this.state.ageGroups} />
-                <ChartBar data={this.state.deathCauses} />
+                <ChartBar data={this.state.deathCauses} legend={true} />
                 <ChartPie data={this.state.education} />
                 <ChartPie data={this.state.nationality} />
                 <ChartPie data={this.state.marital} />
+                <ChartPie data={this.state.commuting} />
             </div>
         )
     }
