@@ -8,11 +8,6 @@ from views.decorators import speaks_json
 bp_common = Blueprint('common', __name__)
 
 
-@bp_common.route('/')
-def hello_world():
-    return render_template('home.html')
-
-
 @bp_common.route('/trest')
 @speaks_json
 def hello_json():
