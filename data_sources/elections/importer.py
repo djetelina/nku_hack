@@ -131,7 +131,6 @@ def process_data() -> List[Tuple[int, int, str, int]]:
     Stazene soubory obsahujici data k vysledkum voleb se zpracuji a vygeneruje dict s daty.
     """
     xml_namespaces = {'volby': 'http://www.volby.cz/ps/'}
-
     response_data = []
     for nuts in NUTS:
         data = download_data(nuts)
@@ -152,7 +151,6 @@ def process_data() -> List[Tuple[int, int, str, int]]:
                 party_id = party.get('KSTRANA')
                 party_name = POLITICAL_PARTIES[party_id]
                 votes = party.get('HLASY')
-
                 response_data.append(
                     (
                         municipality_id,
@@ -168,7 +166,6 @@ def save_to_dump(table_name: str, data: List[Tuple[int, int, str, int]]) -> None
     """
     Ulozi data do dumpu.
     """
-    print('Ukládám do dumpu.')
 
     gzf = gzip.GzipFile(os.path.join('dump', '{}.sql.gz'.format(table_name)), "w", compresslevel=9)
 

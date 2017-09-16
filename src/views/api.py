@@ -11,6 +11,7 @@ from .population import education, marital_status, nationality
 from .elections import elections
 from .to_survive import to_survive
 
+
 bp_api = Blueprint('api', __name__, url_prefix='/api/')
 
 
@@ -36,3 +37,4 @@ bp_api.add_url_rule('death-causes', 'death_causes', view_func=get_death_causes)
 bp_api.add_url_rule('elections', 'elections', view_func=elections)
 
 bp_api.add_url_rule('to_survive', 'to_survive', view_func=to_survive)
+
