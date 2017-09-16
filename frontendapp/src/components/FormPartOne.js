@@ -40,6 +40,10 @@ const DATA_FETCH = [
         uri: '/api/to_survive',
         prop: 'toSurvive',
     },
+    {
+        uri: '/api/elections',
+        prop: 'election',
+    },
 ];
 
 const customCss = `
@@ -100,6 +104,7 @@ class FormPartOne extends React.Component {
             marital: null,
             commuting: null,
             toSurvive: null,
+            election: null,
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -116,7 +121,6 @@ class FormPartOne extends React.Component {
         this.map_component.addDefaultControls();
         this.marker_layer = new window.SMap.Layer.Marker();
         this.map_component.addLayer(this.marker_layer).enable();
-         console.log("map component SET!!!");
         /* eslint-enable */
 
     }
@@ -167,6 +171,7 @@ class FormPartOne extends React.Component {
             marital: null,
             commuting: null,
             toSurvive: null,
+            election: null,
         });
     }
 
@@ -267,26 +272,16 @@ class FormPartOne extends React.Component {
                     </div>
                 </div>
                 <hr />
-                <ChartPie data={this.state.commuting} />
-                {this.state.toSurvive &&
-                <div style={{position: "relative", width: "50%"}}>
-                    <div style={{position: "absolute", right: 0, bottom: 0}}>
-                        <h2>
-                            {this.state.toSurvive.data[0]['value'] > this.state.toSurvive.data[1]['value'] ? "Muži" : "Ženy"}
-                            &nbsp;žijí dele o &nbsp;
-                            {
-                                Math.abs(
-                                    parseFloat(
-                                        this.state.toSurvive.data[0]['value'] -
-                                        this.state.toSurvive.data[1]['value']
-                                    ).toFixed(2)
-                                )
-                            } let
-                        </h2>
+                <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                    <div className="pie-column">
+                        <ChartPie data={this.state.commuting} />
                     </div>
-                    <ChartPie data={this.state.toSurvive}/>
+                    <div className="pie-column">
+                        <ChartPie data={this.state.toSurvive}/>
+                    </div>
                 </div>
-                }
+                <hr />
+                <ChartBar data={this.state.election} legend={true} legendAsHref={true}/>
             </div>
         );
     }

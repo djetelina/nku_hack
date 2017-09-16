@@ -45,8 +45,8 @@ def prepare_data(request_args: Dict[str, str], data_type: str) -> Tuple[List[Dic
             else:
                 percent = 0
             response_data.append({
-                'key': '{} {:.2f} %'.format(item[1], percent),
-                'value': item[2],
+                'x': '{} {:.2f} %'.format(item[1], percent),
+                'y': item[2],
             })
 
     return sorted(response_data, key=lambda x: x['value'], reverse=True), label
