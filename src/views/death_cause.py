@@ -1,21 +1,37 @@
 # -*- encoding: utf-8 -*-
 from views.decorators import speaks_json, allowed_post_only
-from flask import request
+from flask import request, json
 from util import db
+
+
+COLORS = ["#AD343E", "#474747", "#F2AF29", "#000000", "#E0E0CE"]
 
 
 @speaks_json
 @allowed_post_only
 def get_death_causes():
     """
+    Vrati nejcastejsi umrti.
     """
+    args = json.loads(request.data)
+    district_code = int(args['district_code'])
 
-    municipality_code = request.form.get('municipality_code')
-    district_code = request.form.get('district_code')
-    region_code = request.form.get('region_id')
+    with db.common_db(cursor=True) as cursor:
+        query = """
+        select 
+          dc.year as year, 
+          dc.cause_id as cause_id,
+          sum(dc.value) as val,
+          d.name as disease_name
+        FROM death_cause dc, disease d
+        where district_id=? and dc.value > 0 and d.code=dc.cause_id 
+        GROUP BY dc.year, dc.cause_id, d.name 
+        ORDER BY dc.value DESC 
+        LIMIT 5
+        """
+        cursor.execute(query, (district_code,))
+        data = [{'x': item['disease_name'],
+                'y': item['val'], 'color': color} for item, color in zip(cursor.fetchall(), COLORS) if item]
 
-    response_data = []
-    with db.common_db() as connection:
-        cursor = connection.cursor()
+        return dict(result=True, data={'data': data, 'title': "Nejčastější úmrtí v okrese jsou na..."})
 
-    return response_data
